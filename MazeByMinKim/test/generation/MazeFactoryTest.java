@@ -31,7 +31,8 @@ class MazeFactoryTest {
 	
 	void noClosedRoom() {
 		/*this test is checking if the maze generated doesn't have any
-		 closed room.
+		 closed room. If there is a room, then check whether the room has
+		 an exit. 
 		 */
 	}
 
