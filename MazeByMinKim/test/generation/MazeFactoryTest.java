@@ -2,6 +2,7 @@ package generation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 
 import gui.Constants;
@@ -22,7 +23,7 @@ class MazeFactoryTest {
 	private int height;
 	
 	@BeforeEach
-	void setUp() {
+	final void setUp() {
 		defaultOrder = new DefaultOrder();
 		mazeFactory = new MazeFactory();
 		mazeFactory.order(defaultOrder);
@@ -32,6 +33,7 @@ class MazeFactoryTest {
 		height = defaultOrder.getMaze().getHeight();
 		distance = new Distance(width, height);
 	}
+	
 	
 	@Test
 	final void testMazeFactory() {

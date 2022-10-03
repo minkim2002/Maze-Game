@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 /**
   * This class has the responsibility to create a maze of given dimensions (width, height) 
  * together with a solution based on a distance matrix.
- * The MazeBuilder implements Runnable such that it can be run a separate thread.
+ * The MazeBuilder implements Runnable such that it ca-n be run a separate thread.
  * The MazeFactory has a MazeBuilder and handles the thread management.   
 
  * 
