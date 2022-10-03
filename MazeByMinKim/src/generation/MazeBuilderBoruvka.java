@@ -1,7 +1,22 @@
 package generation;
 
+import java.awt.Dimension;
+import java.awt.print.Printable;
+import java.nio.channels.AlreadyConnectedException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Random;
 import java.util.logging.Logger;
+
+import javax.imageio.event.IIOReadUpdateListener;
+
+import org.hamcrest.core.Is;
+import org.junit.internal.runners.model.EachTestNotifier;
+
+
+
 
 public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
@@ -12,15 +27,15 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 		LOGGER.config("Using Boruvka's algorithm to generate maze.");
 	}
 	
-	public int getEdgeWeight(int x, int y, CardinalDirection cd) {
-		return 0;
-	}
+	int[][][] edgeWeight;
+	Set<Integer> connected;
+	ArrayList<Set<Integer>> path;
 	
 	@Override
 	public void generatePathways() {
 		
 		// Expanding the MST till all cells are connected.
-				// for each round, find a minimum cost path for each cell, then connect the cells
+				// for each round, fi nd a minimum cost path for each cell, then connect the cells
 				// through the minimum costs.
 				// While each and every cell is not visited, iterate the process.
 				//
@@ -39,12 +54,41 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 				// After termination, many cells will be marked as visited, but some cells
 				// inside a room may not be marked as such although they belong to the MST.
 				//
+		edgeWeight = new int [width][height][5];
+		initialization(edgeWeight);
+		
+		//final Set<Integer> connected  = new HashSet<>();
+		final ArrayList<Set<Integer>> path = new ArrayList<>();
+		for (int i=0; i<width; i++) {
+			for(int j=0; j<height; j++) {
+				Set<Integer> connected = new HashSet<>();
+				connected.add(edgeWeight[i][j][0]);
+				path.add(connected);
+				
+			}
+		}
+		
+		while(path.size()>1) {
+			for (Set<Integer> i : path){
+				int data[] = findMinPlace(i);
+				Wallboard curWallboard = new Wallboard(data[0],data[1],intToDir(data[2]));
+				while(!floorplan.canTearDown(curWallboard))
+				{
+					data = findMinPlace(i);
+					curWallboard = new Wallboard(data[0],data[1],intToDir(data[2]));
+				}
+				updateSet(data, i);
+				floorplan.deleteWallboard(curWallboard);
+				
+			}
+			updateList();
+		}
 		
 		// in order to have a randomized algorithm,
 		// we randomly select and extract a wallboard from our candidate set
 		// this also reduces the set to make sure we terminate the loop
 		
-		//Assign a random value to every edges.
+		
 		
 		//Find the minimum value for each cell, connect the cells.
 		//delete wallboard from maze, note that this takes place from both directions
@@ -59,52 +103,165 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 
 	}
 	
-	/**
-	 * Add the given cell (x,y) to the MST by marking it as visited and add its wallboards
-	 * that lead to cells outside of the MST to the list of candidates (unless they are borderwalls).
-	 * @param x the x coordinate of interest
-	 * @param y the y coordinate of interest
-	 * @param candidates the new elements should be added to, must not be null
-	 */
-	protected void addCellToMST(int x, int y, final ArrayList<Wallboard> candidates) {
-		floorplan.setCellAsVisited(x, y); // the flag is never reset, so this ensure we never go to (x,y) again
-		updateListOfWallboards(x, y, candidates); // checks to see if it has wallboards to new cells, if it does it adds them to the list
-	}
-	
-	
-	/**
-	 * Pick a random position in the list of candidates, remove the candidate from the list and return it
-	 * @param candidates is the list of candidates to randomly remove a wall board from
-	 * @return candidate from the list, randomly chosen
-	 */
-	private Wallboard extractWallboardFromCandidateSetRandomly(final ArrayList<Wallboard> candidates) {
-		return candidates.remove(random.nextIntWithinInterval(0, candidates.size()-1)); 
-	}
-	
-
-	/**
-	 * Updates a list of all wallboards that could be removed from the maze based on wallboards towards new cells.
-	 * For the given x, y coordinates, one checks all four directions
-	 * and for the ones where one can tear down a wallboard, a 
-	 * corresponding wallboard is added to the list of wallboards.
-	 * @param x the x coordinate of interest
-	 * @param y the y coordinate of interest
-	 * @param wallboards the new elements should be added to, must not be null
-	 */
-	private void updateListOfWallboards(int x, int y, ArrayList<Wallboard> wallboards) {
-		if (reusedWallboard == null) {
-			reusedWallboard = new Wallboard(x, y, CardinalDirection.East) ;
+	public int getEdgeWeight(int x, int y, CardinalDirection cd) {
+		int weight;
+		int cdNum = dirToInt(cd);
+		
+		if(edgeWeight[x][y][cdNum]!=0) {
+			weight = edgeWeight[x][y][cdNum];
+		}else {
+			Random random = new Random();
+			weight = random.nextInt(9)+1;
 		}
-		for (CardinalDirection cd : CardinalDirection.values()) {
-			reusedWallboard.setLocationDirection(x, y, cd);
-			if (floorplan.canTearDown(reusedWallboard)) // 
-			{
-				wallboards.add(new Wallboard(x, y, cd));
+		return weight;
+		
+	}
+	
+	public void initialization(int[][][] data) {
+		int cellIndx = 0;
+		for(int i = 0; i<width; i++) {
+			for(int j = 0; j<height; j++) {
+				for(int k = 1; k<=4; k++) {
+					if(k==0) {
+						edgeWeight[i][j][k]= cellIndx;
+						cellIndx++;
+					}
+					else if((k==2 || k==4) && !(floorplan.isPartOfBorder(new Wallboard(i, j, intToDir(k))))) {
+						edgeWeight[i][j][k]=  getEdgeWeight(i, j, intToDir(k));
+					}else if(k==1 && !(floorplan.isPartOfBorder(new Wallboard(i, j, intToDir(k))))) {
+						edgeWeight[i][j][k]= edgeWeight[i][j-1][k]; 
+					}else if(k==3 && !(floorplan.isPartOfBorder(new Wallboard(i, j, intToDir(k))))) {
+						edgeWeight[i][j][k]= edgeWeight[i-1][j][k]; 
+					}
+				}
 			}
 		}
 	}
-	// exclusively used in updateListOfWallboards
-	Wallboard reusedWallboard; // reuse a wallboard in updateListOfWallboards to avoid repeated object instantiation
-
-
+	
+	public int[] findMinPlace (Set<Integer> a){
+		int min = findMin(a);
+		int[] dimension = new int [3];
+		ArrayList<int[]> candidates = new ArrayList<int[]>();
+		for(int i :a ) {
+			int[] data = indxTodim(i);
+			for(int k = 1; k<=4; k++) {
+				int edge = getEdgeWeight(data[0], data[1], intToDir(k));
+				if(edge==min) {
+					dimension[0] = data[0];
+					dimension[1] = data[1];
+					dimension[2] = k;
+					edgeWeight[data[0]][data[1]][k] = 11;
+					candidates.add(dimension);
+				}
+			}
+		}
+		Random random = new Random();
+		int index;
+		if(!candidates.isEmpty()) {
+			index=random.nextInt(candidates.size());
+		}else {
+			index = 0;
+		}
+		return candidates.get(index);
+	}
+	
+	private int findMin(Set<Integer> a) {
+		int min = 11;
+		int edge;
+		for(int i : a) {
+			int[] data = indxTodim(i);
+			
+			for(int k = 1; k<=4; k++) {
+				edge = getEdgeWeight(data[0], data[1], intToDir(k));
+				if(edge<min) {
+					min = edge;
+				}
+			}
+		}
+	
+		return min;
+		
+	}
+	
+	private int[] indxTodim(int a){
+		int[] data = new int[2];
+		data[0] = a % width;
+		data[1] = a / width;
+		return data;
+	}
+	
+	private int dimToindx(int[] a) {
+		return a[1] * width + a[0];
+	}
+	
+	public int dirToInt(CardinalDirection cd) {
+		
+		if(cd.equals(CardinalDirection.North)){
+			return 1;
+		}
+		if(cd.equals(CardinalDirection.East)){
+			return 2;
+		}
+		if(cd.equals(CardinalDirection.West)){
+			return 3;
+		}
+		if(cd.equals(CardinalDirection.South)){
+			return 4;
+		}
+		return 0;
+	}
+	
+	public CardinalDirection intToDir(int drInt) {
+		
+		if(drInt == 1){
+			return CardinalDirection.North;
+		}
+		if(drInt == 2){
+			return CardinalDirection.East;
+		}
+		if(drInt == 3){
+			return CardinalDirection.West;
+		}
+		if(drInt == 4){
+			return CardinalDirection.South;
+		}
+		return CardinalDirection.North;
+	}
+	
+	public void updateSet(int[] a, Set<Integer> b) {
+		int indx = dimToindx(a);
+		if(a[2]==1) {
+			b.add(indx-width);
+		}
+		else if (a[2]==2) {
+			b.add(indx+1);
+		}
+		else if (a[2]==3) {
+			b.add(indx-1);
+		}else {
+			b.add(indx+width);
+		}
+	}
+	public void updateList() {
+		for(int i = 0; i<path.size()-1; i++) {
+			for(int j = 1; j<path.size(); j++) {
+				if(isDuplicate(path.get(i), path.get(j))){
+					for (int x : path.get(j)){
+						path.get(i).add(x);
+					}
+					path.remove(j);
+				}
+			}
+		}
+	}
+	private boolean isDuplicate(Set<Integer> a, Set<Integer> b) {
+		for(int i : a){
+			for(int j : b){
+				if(i==j) {
+					return true;
+				}
+			}
+		}return false;
+	}
 }
+	
