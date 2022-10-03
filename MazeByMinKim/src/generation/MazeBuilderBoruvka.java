@@ -63,6 +63,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 			for(int j=0; j<height; j++) {
 				Set<Integer> connected = new HashSet<>();
 				connected.add(edgeWeight[i][j][0]);
+				
 				path.add(connected);
 				
 			}
@@ -81,7 +82,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 				floorplan.deleteWallboard(curWallboard);
 				
 			}
-			updateList();
+			updateList(path);
 		}
 		
 		// in order to have a randomized algorithm,
@@ -121,7 +122,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 		int cellIndx = 0;
 		for(int i = 0; i<width; i++) {
 			for(int j = 0; j<height; j++) {
-				for(int k = 1; k<=4; k++) {
+				for(int k = 0; k<=4; k++) {
 					if(k==0) {
 						edgeWeight[i][j][k]= cellIndx;
 						cellIndx++;
@@ -156,13 +157,15 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 			}
 		}
 		Random random = new Random();
-		int index;
+		int index=0;
 		if(!candidates.isEmpty()) {
 			index=random.nextInt(candidates.size());
-		}else {
-			index = 0;
 		}
-		return candidates.get(index);
+		if(candidates.isEmpty()) {
+			return dimension;
+		}else {
+			return candidates.get(index);
+		}
 	}
 	
 	private int findMin(Set<Integer> a) {
@@ -242,14 +245,14 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 			b.add(indx+width);
 		}
 	}
-	public void updateList() {
-		for(int i = 0; i<path.size()-1; i++) {
-			for(int j = 1; j<path.size(); j++) {
-				if(isDuplicate(path.get(i), path.get(j))){
-					for (int x : path.get(j)){
-						path.get(i).add(x);
+	public void updateList(ArrayList<Set<Integer>> a) {
+		for(int i = 0; i<a.size()-1; i++) {
+			for(int j = 1; j<a.size(); j++) {
+				if(isDuplicate(a.get(i), a.get(j))){
+					for (int x : a.get(j)){
+						a.get(i).add(x);
 					}
-					path.remove(j);
+					a.remove(j);
 				}
 			}
 		}
