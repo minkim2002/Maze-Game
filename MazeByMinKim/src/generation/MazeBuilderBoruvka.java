@@ -123,7 +123,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * Also, for each cell, assign a value for each wallboard. For wallboard to the east and south side, call getEdgeWeight
 	 * to get a value randomly. For wallboard to the north and west side, since it is a duplicate wall with a cell above and next, 
 	 * simply copy the value that is already assigned. 
-	 * @param 3-dimensional array data, where each cell in an array will take width, height, direction value of a cell in maze.
+	 * @param data 3-dimensional array data, where each cell in an array will take width, height, direction value of a cell in maze.
 	 */
 	public void initialization(int[][][] data) {
 		int cellIndx = 0;
@@ -153,7 +153,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * are going to remove and connect to the next cell. With the minimum value, iterate all the wallboards of the cells 
 	 * in the sets to find the list of wallboards that contain the minimum value. If there is more than one, 
 	 * we randomly select a wallboard to remove.
-	 * @param a set of integers which represents the set of already connected cells.
+	 * @param a a set of integers which represents the set of already connected cells.
 	 * @return an array of integers that represent the coordinate of a cell and the direction of a wallboard, which will be removed.
 	 */
 	public int[] findMinPlace (Set<Integer> a){
@@ -204,7 +204,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	/**
 	 * For each trees(sets), we have to find a minimum path to connect to the next cells. This method helps finding a minimum
 	 * value of a wallboard of the cell in the set, which has not been removed yet.
-	 * @param a set of integers which represents the set of already connected cells.
+	 * @param a a set of integers which represents the set of already connected cells.
 	 * @return an integer that represents the smallest value of a wallboard that has not been removed.
 	 */
 	public int findMin(Set<Integer> a) {
@@ -230,7 +230,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
 	/**
 	 * input an index value of a cell to know where the cell is located at. 
-	 * @param an index value of a cell
+	 * @param a an index value of a cell
 	 * @return an array containing two values: x coordinate and y coordinate of a cell.
 	 */
 	public int[] indxTodim(int a){
@@ -242,7 +242,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
 	/**
 	 * input a coordinate of a cell to find an index value of the cell.
-	 * @param an array containing two values: x coordinate and y coordinate of a cell.
+	 * @param a an array containing two values: x coordinate and y coordinate of a cell.
 	 * @return an index value of a cell
 	 */
 	public int dimToindx(int[] a) {
@@ -251,7 +251,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
 	/**
 	 * Switch the direction to the corresponding integer. 
-	 * @param a direction of the wallboard of the cell.
+	 * @param cd a direction of the wallboard of the cell.
 	 * @return an integer which represents a direction.
 	 */
 	public int dirToInt(CardinalDirection cd) {
@@ -273,7 +273,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
 	/**
 	 * Switch the integer that represents a direction to a direction itself.
-	 * @param an integer which represents a direction.
+	 * @param drInt an integer which represents a direction.
 	 * @return a direction of the wallboard of the cell.
 	 */
 	public CardinalDirection intToDir(int drInt) {
@@ -297,8 +297,8 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * When the wallboard is removed, we have to add the cell that is newly connected by the absence of the wallboard.
 	 * using the index value of a cell gained from the coordinate and the direction, we can determine which new cell to be
 	 * connected based on which side of the wallboard is removed.
-	 * @param an array of an integer, which represents the coordinate of a cell and the direction of wallboard of a cell. 
-	 * @param a set of Integers, which represent a tree.
+	 * @param a an array of an integer, which represents the coordinate of a cell and the direction of wallboard of a cell. 
+	 * @param b a set of Integers, which represent a tree.
 	 */
 	public void updateSet(int[] a, Set<Integer> b) {
 		int indx = dimToindx(a);
@@ -328,7 +328,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * After each time sets are newly updated, we also have to update the list of sets. If sets have duplicate values,
 	 * meaning that they contain the same cell, we have to merge them, since they are connected already.
 	 * After moving all the values of one set to another, delete the set, so that we now have one big set.
-	 * @param an Arraylist of sets of integers, which represent the list of trees that are making the maze.
+	 * @param a an Arraylist of sets of integers, which represent the list of trees that are making the maze.
 	 */
 	public void updateList(ArrayList<Set<Integer>> a) {
 		for(int i = 0; i<a.size()-1; i++) {
@@ -348,7 +348,8 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	/**
 	 * By iterating through two sets, we can find whether there is a duplicate value in the set, meaning that
 	 * two sets are supposed to be connected, since they have the same cell.
-	 * @param two sets of Integers, which represent two trees.
+	 * @param a two sets of Integers, which represent two trees.
+	 * @param b two sets of Integers, which represent two trees.
 	 * @return whether two sets have duplicate values or not. 
 	 */
 	public boolean isDuplicate(Set<Integer> a, Set<Integer> b) {

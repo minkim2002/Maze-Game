@@ -12,7 +12,13 @@ import org.junit.jupiter.api.TestFactory;
 
 import generation.Order.Builder;
 
-class MazeBuilderBoruvkaTest extends MazeFactoryTest {
+/**  Boruvka Test: Test Boruvka's algorithms and methods used to implement the algorithm.
+ * 
+ * @author Min Kim
+ *
+ */
+
+public class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 	
 
 	private int height;
@@ -23,6 +29,7 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 	
 	@BeforeEach
 	final void setUp() {
+		
 		mazeBuilderBoruvka = new MazeBuilderBoruvka();
 		testFactory = new MazeFactory();
 		DefaultOrder baseOrder = new DefaultOrder();
@@ -33,8 +40,10 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		
 	}
 	
+	/**  Test whether a wallboard is assigned a correct value from 1 to 10.
+	 */
 	 @Test
-	 final void testEdgeWeight(){
+	 public final void testEdgeWeight(){
 		int weight = mazeBuilderBoruvka.getEdgeWeight(1,3,CardinalDirection.North);
 		if (weight>0 && weight<11) {
 			weight = 0;
@@ -42,37 +51,47 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		assertEquals(weight, 0);
 	 }
 	 
+	 /**  Test whether an index of a cell is correctly switched to a coordinate of a cell.
+	  */
 	 @Test
-	 final void testIndxtoDim() {
+	 public final void testIndxtoDim() {
 		 int a = 10;
 		 int[] data = new int[2];
 		 data = mazeBuilderBoruvka.indxTodim(a);
 		 assertEquals(a/height, data[1]);
 	 }
 	 
+	 /**  Test whether a coordinate of a cell is successfully switched to an index of a cell.
+	  */
 	 @Test
-	 final void testDimtoIndx(){
+	 public final void testDimtoIndx(){
 		 int a = 10;
 		 int[] data = new int[2];
 		 data = mazeBuilderBoruvka.indxTodim(a);
 		 assertEquals(mazeBuilderBoruvka.dimToindx(data), 10);
 	 }
 	 
+	 /**  Test whether a direction of a wallboard is correctly switched to a corresponding integer.
+	  */
 	 @Test
-	 final void testDirToInt() {
+	 public final void testDirToInt() {
 		 CardinalDirection cd = CardinalDirection.East;
 		 assertEquals(mazeBuilderBoruvka.dirToInt(cd), 2);
 	 }
 	 
+	 /**  Test whether an integer value of a direction is successfully converted into a direction.
+	  */
 	 @Test
-	 final void testIntToDir() {
+	 public final void testIntToDir() {
 		 CardinalDirection cd = CardinalDirection.East;
 		 int x = 2;
 		 assertEquals(mazeBuilderBoruvka.intToDir(x), cd);
 	 }
 	 
+	 /**  Test whether a set successfully include an another index of a cell in a right direction. 
+	  */
 	 @Test
-	 final void testUpdateSet() {
+	 public final void testUpdateSet() {
 		 Set<Integer> b = new HashSet<>();
 		 int[] data = new int[3];
 		 data[2] = 2;
@@ -86,8 +105,10 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		 
 	 }
 	 
+	 /**  Test whether a list successfully merge two sets and delete one when two sets have a same value. 
+	  */
 	 @Test
-	 final void testUpdateList(){
+	 public final void testUpdateList(){
 		 ArrayList<Set<Integer>> data = new ArrayList<>();
 		 Set<Integer> a = new HashSet<>();
 		 a.add(1);
@@ -104,8 +125,10 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		 
 	 }
 	 
+	 /**  Test whether the method can point out when two sets have the same value.
+	  */
 	 @Test
-	 final void testIsDuplicate() {
+	 public final void testIsDuplicate() {
 		 Set<Integer> a = new HashSet<>();
 		 a.add(1);
 		 a.add(3);
@@ -117,8 +140,10 @@ class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		 assertEquals(mazeBuilderBoruvka.isDuplicate(a, b), true);
 	 }
 	 
+	 /**  Test whether the method can find a minimum value from the set given.
+	  */
 	 @Test
-	 final void findMin() {
+	 public final void findMin() {
 		 Set<Integer> a = new HashSet<>();
 		 a.add(1);
 		 a.add(3);
