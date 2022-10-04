@@ -17,10 +17,15 @@ import org.junit.internal.runners.model.EachTestNotifier;
 
 
 
-// Boruvka's Algorithm: Expanding the MST till all cells are connected.
-// for each round, find a minimum cost path for each cell, then connect the cells
-// through the minimum costs.
-// While one single tree is not formed, iterate the process.
+
+/** Boruvka's Algorithm: Expanding the MST till all cells are connected.
+ * for each round, find a minimum cost path for each cell, then connect the cells
+ * through the minimum costs.
+ * While one single tree is not formed, iterate the process.
+ * 
+ * @author Min Kim
+ *
+ */
 
 public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	
@@ -66,16 +71,16 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 		
 		int data[] = new int[3];
 		//Iterating the process until there is one big tree left in the list.
-		while(path.size()>1) {
+		while(path.size()!=1 && path.get(0).size()!=width*height) {
 			for (Set<Integer> i : path){
 				//find the minimum path for each set in the list
-				data = findMinPlace(i, findMin(i));
+				data = findMinPlace(i);
 				//declare a wallboard with the minimum path
 				Wallboard curWallboard = new Wallboard(data[0],data[1],intToDir(data[2]));
 				//if the wallboard cannot be torn down, pick other one.
 				while(!floorplan.canTearDown(curWallboard))
 				{
-					data = findMinPlace(i, findMin(i));
+					data = findMinPlace(i);
 					curWallboard = new Wallboard(data[0],data[1],intToDir(data[2]));
 				}
 				//update the set and delete the wallboard.
@@ -151,32 +156,40 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * @param a set of integers which represents the set of already connected cells.
 	 * @return an array of integers that represent the coordinate of a cell and the direction of a wallboard, which will be removed.
 	 */
-	public int[] findMinPlace (Set<Integer> a, int min){
+	public int[] findMinPlace (Set<Integer> a){
 		//information for wallboards: coordinate & direction
+		int min = findMin(a);
 		int[] dimension = new int [3];
 		int[] copy = new int[3];
 		int[] data = new int[2];
 		int edge;
+		int count =0;
 		//list for wallboards that contain a minimum value
 		ArrayList<int[]> candidates = new ArrayList<int[]>();
+		
+		
 		for(int i : a) {
 			data = indxTodim(i);
 			for(int k = 1; k<=4; k++) {
+				Wallboard curWallboard = new Wallboard(data[0],data[1],intToDir(k));
+				if(floorplan.canTearDown(curWallboard)) {
 				edge = getEdgeWeight(data[0], data[1], intToDir(k));
-				if(edge == min) {
-					//if the wallboard contains the minimum value, record its information the the array. 
-					dimension[0] = data[0];
-					dimension[1] = data[1];
-					dimension[2] = k;
-					copy = dimension;
-					//after recording, add a reference to candidates
-					//edgeWeight[data[0]][data[1]][k] = 11;
-					candidates.add(copy);
+					if(edge == min) {
+						count++;
+						//if the wallboard contains the minimum value, record its information the the array. 
+						dimension[0] = data[0];
+						dimension[1] = data[1];
+						dimension[2] = k;
+						
+						//after recording, add a reference to candidates
+						//edgeWeight[data[0]][data[1]][k] = 11;
+						candidates.add(dimension);
+					}
 				}
 			}
 		}
 		if (candidates.size() == 0) {
-			candidates.add(findMinPlace(a, findMin(a)));
+			candidates.add(dimension);
 		}
 		Random random = new Random();
 		int index=0;
@@ -194,11 +207,10 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * @param a set of integers which represents the set of already connected cells.
 	 * @return an integer that represents the smallest value of a wallboard that has not been removed.
 	 */
-	private int findMin(Set<Integer> a) {
+	public int findMin(Set<Integer> a) {
 		//initialize minimum as 11 since no wallboard has a higher value than 10. 
 		int min = 11;
 		int edge;
-		
 		for(int i : a) {
 			int[] data = indxTodim(i);
 			//for each cell, check all four wallboards. 
@@ -212,7 +224,6 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 				}
 			}
 		}
-		System.out.println(min);
 		return min;
 		
 	}
@@ -222,7 +233,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * @param an index value of a cell
 	 * @return an array containing two values: x coordinate and y coordinate of a cell.
 	 */
-	private int[] indxTodim(int a){
+	public int[] indxTodim(int a){
 		int[] data = new int[2];
 		data[0] = a % width;
 		data[1] = a / width;
@@ -234,7 +245,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * @param an array containing two values: x coordinate and y coordinate of a cell.
 	 * @return an index value of a cell
 	 */
-	private int dimToindx(int[] a) {
+	public int dimToindx(int[] a) {
 		return a[1] * width + a[0];
 	}
 	
@@ -293,18 +304,22 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 		int indx = dimToindx(a);
 		//if the wallboard to the north is to be removed, connect the cell to the north. 
 		if(a[2]==1) {
+			edgeWeight[a[0]][a[1]][a[2]] = 11;
 			b.add(indx-width);
 		}
 		//if the wallboard to the east is to be removed, connect the cell to the east. 
 		else if (a[2]==2) {
+			edgeWeight[a[0]][a[1]][a[2]] = 11;
 			b.add(indx+1);
 		}
 		//if the wallboard to the west is to be removed, connect the cell to the west. 
 		else if (a[2]==3) {
+			edgeWeight[a[0]][a[1]][a[2]] = 11;
 			b.add(indx-1);
 		}
 		//if the wallboard to the south is to be removed, connect the cell to the south. 
 		else {
+			edgeWeight[a[0]][a[1]][a[2]] = 11;
 			b.add(indx+width);
 		}
 	}
@@ -317,7 +332,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 */
 	public void updateList(ArrayList<Set<Integer>> a) {
 		for(int i = 0; i<a.size()-1; i++) {
-			for(int j = 1; j<a.size(); j++) {
+			for(int j = i; j<a.size(); j++) {
 				if(isDuplicate(a.get(i), a.get(j))){
 					//if two sets have duplicated, merge them into one
 					for (int x : a.get(j)){
@@ -336,7 +351,7 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	 * @param two sets of Integers, which represent two trees.
 	 * @return whether two sets have duplicate values or not. 
 	 */
-	private boolean isDuplicate(Set<Integer> a, Set<Integer> b) {
+	public boolean isDuplicate(Set<Integer> a, Set<Integer> b) {
 		for(int i : a){
 			for(int j : b){
 				if(i==j) {
@@ -347,3 +362,4 @@ public class MazeBuilderBoruvka extends MazeBuilder implements Runnable {
 	}
 }
 	
+
