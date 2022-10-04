@@ -23,7 +23,7 @@ class MazeFactoryTest {
 	private int height;
 	
 	@BeforeEach
-	final void setUp() {
+	void setUp() {
 		defaultOrder = new DefaultOrder();
 		mazeFactory = new MazeFactory();
 		mazeFactory.order(defaultOrder);
