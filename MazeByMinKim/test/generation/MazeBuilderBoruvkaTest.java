@@ -140,7 +140,7 @@ public class MazeBuilderBoruvkaTest extends MazeFactoryTest {
 		 assertEquals(mazeBuilderBoruvka.isDuplicate(a, b), true);
 	 }
 	 
-	 /**  Test whether the method can find a minimum value from the set given.
+	 /**  Test whether the method can find a minimum value from the set given
 	  */
 	 @Test
 	 public final void findMin() {
