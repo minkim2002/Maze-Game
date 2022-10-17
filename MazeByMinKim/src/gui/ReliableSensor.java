@@ -23,7 +23,7 @@ import gui.Robot.Direction;
 public class ReliableSensor implements DistanceSensor {
 	
 	
-	protected Maze referenceMaze; 
+	Maze referenceMaze; 
 	private int width;
 	private int height;
 	protected Direction referenceDirection;

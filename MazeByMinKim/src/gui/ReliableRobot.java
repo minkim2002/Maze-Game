@@ -22,11 +22,11 @@ import generation.Maze;
 
 public class ReliableRobot implements Robot {
 
-	private Control control;
-	private DistanceSensor reliableSensorForward;
-	private DistanceSensor reliableSensorLeft;
-	private DistanceSensor reliableSensorBackward;
-	private DistanceSensor reliableSensorRight;
+	protected Control control;
+	protected DistanceSensor reliableSensorForward;
+	protected DistanceSensor reliableSensorLeft;
+	protected DistanceSensor reliableSensorBackward;
+	protected DistanceSensor reliableSensorRight;
 
 	private Maze referenceMaze;
 	private int width;
