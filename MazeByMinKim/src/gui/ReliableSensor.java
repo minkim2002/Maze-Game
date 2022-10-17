@@ -23,11 +23,11 @@ import gui.Robot.Direction;
 public class ReliableSensor implements DistanceSensor {
 	
 	
-	private Maze referenceMaze; 
+	protected Maze referenceMaze; 
 	private int width;
 	private int height;
-	private Direction referenceDirection;
-	private boolean isOperational; 
+	protected Direction referenceDirection;
+	protected boolean isOperational; 
 	
 	private Map<ArrayList<Integer>, CardinalDirection> getDirMap;
 	private Map<CardinalDirection, ArrayList<Integer>> getCoordMap;

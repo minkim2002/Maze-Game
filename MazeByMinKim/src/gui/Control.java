@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
+
 import generation.*;
 
 import gui.ColorTheme.ColorThemeSelection;
@@ -109,9 +110,7 @@ public class Control extends JFrame implements KeyListener {
      * for testing purposes but otherwise panel is never null.
      */
     MazePanel panel;
-    
-    Wizard wizard = new Wizard();
-    ReliableRobot reliableRobot = new ReliableRobot();
+  
 
     /**
      * Default constructor
@@ -316,7 +315,14 @@ public class Control extends JFrame implements KeyListener {
 	    	// TODO: for P2 assignment, please add code to set the builder accordingly
 	    	//throw new RuntimeException("Don't know anybody named " + parameter);
 	    case "Wizard":
+	    	((StateTitle)currentState).setBuilder(Order.Builder.DFS);
+	    	
+	    	msg = "Command line input detected: playing the game with wizard";
+	    	Robot reliableRobot = new ReliableRobot();
+	    	RobotDriver wizard = new Wizard();
 	    	setRobotAndDriver(reliableRobot, wizard);
+	    	
+	    	break;
 	    default: // assume this is a filename
 	    	File f = new File(parameter) ;
 	        if (f.exists() && f.canRead())

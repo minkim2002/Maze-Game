@@ -35,13 +35,13 @@ public class ReliableRobot implements Robot {
 	private float battery;
 	private int distanceTraveled;
 	private boolean isStopped;
+	
+	protected final static float INITIAL_BATTERY = 3500;
 
 	public ReliableRobot() {
-		addDistanceSensor(reliableSensorForward, Direction.FORWARD);
-		addDistanceSensor(reliableSensorLeft, Direction.LEFT);
-		addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
-		addDistanceSensor(reliableSensorRight, Direction.RIGHT);
-		setBatteryLevel(3500);
+		distanceTraveled = 0;
+		setBatteryLevel(INITIAL_BATTERY);
+		isStopped = false;
 	}
 
 	/**
@@ -58,8 +58,6 @@ public class ReliableRobot implements Robot {
 		if (controller == null || !(controller.currentState instanceof StatePlaying) || controller.getMaze() == null)
 			throw new IllegalArgumentException();
 		control = controller;
-		isStopped = false;
-		setBatteryLevel(3500);
 		resetOdometer();
 		referenceMaze = controller.getMaze();
 		width = referenceMaze.getWidth();
@@ -82,7 +80,18 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void addDistanceSensor(DistanceSensor sensor, Direction mountedDirection) {
-		sensor = new ReliableSensor(mountedDirection);
+		if(mountedDirection == Direction.FORWARD) {
+			reliableSensorForward=sensor;
+		}
+		if(mountedDirection == Direction.LEFT) {
+			reliableSensorLeft=sensor;
+		}
+		if(mountedDirection == Direction.RIGHT) {
+			reliableSensorRight=sensor;
+		}
+		if(mountedDirection == Direction.BACKWARD) {
+			reliableSensorBackward=sensor;
+		}
 	}
 
 	/**

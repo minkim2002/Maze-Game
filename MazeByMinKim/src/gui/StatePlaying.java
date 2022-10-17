@@ -1,6 +1,9 @@
 package gui;
 
 import gui.Constants.UserInput;
+import gui.Robot.Direction;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.logging.Logger;
 
@@ -182,6 +185,40 @@ public class StatePlaying implements State {
         	// else: dry-run without graphics, most likely for testing purposes
         	printWarning();
         }
+        
+        if (control.robot != null && control.driver != null) {
+        	ReliableSensor reliableSensorForward = new ReliableSensor();
+        	reliableSensorForward.setSensorDirection(Direction.FORWARD);
+        	reliableSensorForward.setMaze(maze);
+        	
+        	ReliableSensor reliableSensorLeft = new ReliableSensor();
+        	reliableSensorLeft.setSensorDirection(Direction.LEFT);
+        	reliableSensorLeft.setMaze(maze);
+        	
+        	ReliableSensor reliableSensorRight = new ReliableSensor();
+        	reliableSensorRight.setSensorDirection(Direction.RIGHT);
+        	reliableSensorRight.setMaze(maze);
+        	
+        	ReliableSensor reliableSensorBackward = new ReliableSensor();
+        	reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
+        	reliableSensorBackward.setMaze(maze);
+        	
+        	control.robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
+        	control.robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
+        	control.robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
+        	control.robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
+        	
+        	control.robot.setController(control);
+        	control.driver.setMaze(maze);
+        	control.driver.setRobot(control.robot);
+        }
+        
+        try {
+        	boolean complete = control.driver.drive2Exit();
+        	assert complete == true;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
     }
     /**
      * Initializes the drawer for the first person view
@@ -223,7 +260,10 @@ public class StatePlaying implements State {
         // The playing state needs 
         // 1) the path length
         // 
-        currentState.setPathLength(pathLength);
+        if (control.getDriver() != null && control.getRobot() != null) {
+        	currentState.setPathLength(control.getDriver().getPathLength());
+    	}else {
+    		currentState.setPathLength(pathLength);
         
         LOGGER.fine("Control switches from playing to winning screen, game completed.");
         
