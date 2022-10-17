@@ -218,6 +218,7 @@ public class StatePlaying implements State {
         	assert complete == true;
         } catch (Exception e) {
         	e.printStackTrace();
+        	switchFromPlayingToWinning(0);
         }
     }
     /**
@@ -269,8 +270,8 @@ public class StatePlaying implements State {
         
         // update the context class with the new state
         // and hand over control to the new state
-        control.setState(currentState);
         currentState.start(control, panel);
+    	}
     }
     
     /**

@@ -33,8 +33,8 @@ public class ReliableRobot implements Robot {
 	private int height;
 
 	private float battery;
-	private int distanceTraveled;
-	private boolean isStopped;
+	protected int distanceTraveled;
+	protected boolean isStopped;
 	
 	protected final static float INITIAL_BATTERY = 3500;
 
