@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import generation.CardinalDirection;
 import generation.Floorplan;
 import generation.Maze;
+import generation.Order.Builder;
 
 
 /**
@@ -82,6 +83,8 @@ public class StatePlaying implements State {
      * Maze holds the main information on where walls are.
      */
     Maze maze ; 
+    
+    Robot robot;
 
     private boolean showMaze;           // toggle switch to show overall maze on screen
     private boolean showSolution;       // toggle switch to show solution in overall maze on screen

@@ -109,6 +109,9 @@ public class Control extends JFrame implements KeyListener {
      * for testing purposes but otherwise panel is never null.
      */
     MazePanel panel;
+    
+    Wizard wizard = new Wizard();
+    ReliableRobot reliableRobot = new ReliableRobot();
 
     /**
      * Default constructor
@@ -312,6 +315,8 @@ public class Control extends JFrame implements KeyListener {
 	    	break;
 	    	// TODO: for P2 assignment, please add code to set the builder accordingly
 	    	//throw new RuntimeException("Don't know anybody named " + parameter);
+	    case "Wizard":
+	    	setRobotAndDriver(reliableRobot, wizard);
 	    default: // assume this is a filename
 	    	File f = new File(parameter) ;
 	        if (f.exists() && f.canRead())

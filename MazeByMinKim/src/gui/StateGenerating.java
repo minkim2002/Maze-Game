@@ -254,6 +254,10 @@ public class StateGenerating extends DefaultOrder implements State {
         // 
         currentState.setMaze(maze);
         
+        if (control.robot != null && control.driver != null) {
+        	throw new IllegalArgumentException();
+        }
+        
         LOGGER.fine("Control switches from generating to playing screen, maze generation completed.");
         
         // update the context class with the new state
