@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.print.Printable;
+
+
 import gui.Constants.UserInput;
 
 import generation.CardinalDirection;
@@ -291,49 +293,52 @@ public class ReliableRobot implements Robot {
 			return;
 		}
 		try {
-			// fetch the current position of the robot
 			int[] currentPosition = getCurrentPosition();
 			// check if the wall in front is an exterior wall and stop if so
 			switch (getCurrentDirection()) {
 			case North:
-				if (referenceMaze.hasWall(currentPosition[0], currentPos[1], CardinalDirection.North) && currPos[1] - 1 < 0) {
+				if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], CardinalDirection.North)
+						&& currentPosition[1] - 1 < 0) {
 					setBatteryLevel(0);
-					stopped = true;
+					isStopped = true;
 					return;
 				}
 				break;
 			case East:
-				if (maze.hasWall(currPos[0], currPos[1], CardinalDirection.East) && currPos[0] + 1 == width) {
+				if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], CardinalDirection.East)
+						&& currentPosition[0] + 1 == width) {
 					setBatteryLevel(0);
-					stopped = true;
+					isStopped = true;
 					return;
 				}
 				break;
 			case South:
-				if (maze.hasWall(currPos[0], currPos[1], CardinalDirection.South) && currPos[1] + 1 == height) {
+				if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], CardinalDirection.South)
+						&& currentPosition[1] + 1 == height) {
 					setBatteryLevel(0);
-					stopped = true;
+					isStopped = true;
 					return;
 				}
 				break;
 			case West:
-				if (maze.hasWall(currPos[0], currPos[1], CardinalDirection.West) && currPos[0] - 1 < 0) {
+				if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], CardinalDirection.West)
+						&& currentPosition[0] - 1 < 0) {
 					setBatteryLevel(0);
-					stopped = true;
+					isStopped = true;
 					return;
 				}
 				break;
 			}
 		} catch (Exception e) {
-			System.out.println("Position outside maze!");
+			System.out.println("Outside maze");
 			return;
 		}
 		// execute the jump and update the distance traveled and battery level
-		controller.keyDown(UserInput.Jump, 0);
-		distTraveled++;
-		setBatteryLevel(getBatteryLevel() - JUMP_COST);
+		control.handleKeyboardInput(UserInput.JUMP, 0);
+		distanceTraveled++;
+		setBatteryLevel(getBatteryLevel() - 40);
 		if (getBatteryLevel() == 0)
-			stopped = true;
+			isStopped = true;
 	}
 
 	/**
@@ -346,7 +351,14 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public boolean isAtExit() {
-
+		int[] currentPosition;
+		try {
+			currentPosition = getCurrentPosition();
+		} catch (Exception e) {
+			System.out.println("Outside maze");
+			return false;
+		}
+		return control.getMaze().getFloorplan().isExitPosition(currentPosition[0], currentPosition[1]);
 	}
 
 	/**
@@ -356,19 +368,14 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public boolean isInsideRoom() {
-		if (distanceToObstacle(Direction.FORWARD) == 0) {
+		int[] currentPosition;
+		try {
+			currentPosition = getCurrentPosition();
+		} catch (Exception e) {
+			System.out.println("Outside maze");
 			return false;
 		}
-		if (distanceToObstacle(Direction.LEFT) == 0) {
-			return false;
-		}
-		if (distanceToObstacle(Direction.RIGHT) == 0) {
-			return false;
-		}
-		if (distanceToObstacle(Direction.BACKWARD) == 0) {
-			return false;
-		}
-		return true;
+		return control.getMaze().getFloorplan().isInRoom(currentPosition[0], currentPosition[1]);
 	}
 
 	/**
@@ -380,13 +387,7 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public boolean hasStopped() {
-		if (getBatteryLevel() == 0) {
-			return true;
-		}
-		if (distanceToObstacle(Direction.FORWARD) == 0 && !control.wayIsClear(1)) {
-			return true;
-		}
-		return false;
+		return isStopped;
 	}
 
 	/**
@@ -408,30 +409,42 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public int distanceToObstacle(Direction direction) throws UnsupportedOperationException {
+		int[] currentPosition;
 		try {
-			if (direction == Direction.FORWARD) {
-				reliableSensorForward.setSensorDirection(direction);
-				return reliableSensorForward.distanceToObstacle(getCurrentPosition(), getCurrentDirection(),
-						batterylevel);
-			}
-			if (direction == Direction.BACKWARD) {
-				reliableSensorBackward.setSensorDirection(direction);
-				return reliableSensorBackward.distanceToObstacle(getCurrentPosition(), getCurrentDirection(),
-						batterylevel);
-			}
-			if (direction == Direction.LEFT) {
-				reliableSensorLeft.setSensorDirection(direction);
-				return reliableSensorLeft.distanceToObstacle(getCurrentPosition(), getCurrentDirection(), batterylevel);
-			} else {
-				reliableSensorRight.setSensorDirection(direction);
-				return reliableSensorRight.distanceToObstacle(getCurrentPosition(), getCurrentDirection(),
-						batterylevel);
+			currentPosition = getCurrentPosition();
+		} catch (Exception e) {
+			System.out.println("Outside maze");
+			return -1;
+		}
+		float[] batteryLevel = {getBatteryLevel()};
+		int distance = 0;
+		try {
+			switch (direction) {
+			case LEFT:
+				distance = reliableSensorLeft.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				break;
+			case RIGHT:
+				distance = reliableSensorRight.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				break;
+			case FORWARD:
+				distance = reliableSensorForward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				break;
+			case BACKWARD:
+				distance = reliableSensorBackward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				break;
 			}
 		} catch (Exception e) {
-			System.out.println("SensorFailure if the sensor is currently not operational or "
-					+ "PowerFailure if the power supply is insufficient for the operation");
-			return Integer.MAX_VALUE;
+			String msg = e.getMessage();
+			if (msg == "PowerFailure") {
+				setBatteryLevel(0);
+				isStopped = true;
+			}
+			throw new UnsupportedOperationException(msg);
 		}
+		setBatteryLevel(batteryLevel[0]);
+		if (getBatteryLevel() == 0)
+			isStopped = true;
+		return distance;
 	}
 
 	/**
@@ -448,19 +461,11 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public boolean canSeeThroughTheExitIntoEternity(Direction direction) throws UnsupportedOperationException {
-		if ((distanceToObstacle(Direction.FORWARD) == Integer.MAX_VALUE)) {
-			return true;
+		try {
+			return distanceToObstacle(direction) == Integer.MAX_VALUE ? true : false;
+		} catch (Exception e) {
+			throw new UnsupportedOperationException();
 		}
-		if ((distanceToObstacle(Direction.LEFT) == Integer.MAX_VALUE)) {
-			return true;
-		}
-		if ((distanceToObstacle(Direction.RIGHT) == Integer.MAX_VALUE)) {
-			return true;
-		}
-		if ((distanceToObstacle(Direction.BACKWARD) == Integer.MAX_VALUE)) {
-			return true;
-		}
-		return false;
 	}
 
 	@Override
