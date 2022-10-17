@@ -1,6 +1,10 @@
 package gui;
 
+import java.util.function.IntPredicate;
+
+import generation.CardinalDirection;
 import generation.Maze;
+import gui.Robot.Turn;
 
 /**
  * This class has the responsibility to get out of the maze as quick
@@ -22,10 +26,13 @@ public class Wizard implements RobotDriver {
 	 * The driver uses a robot to perform, this method provides it with this necessary information.
 	 * @param r robot to operate
 	 */
+	
+	Robot robot;
+	Maze referenceMaze;
+	
 	@Override
 	public void setRobot(Robot r) {
-		// TODO Auto-generated method stub
-
+		robot = r;
 	}
 	
 	/**
@@ -34,8 +41,7 @@ public class Wizard implements RobotDriver {
 	 */
 	@Override
 	public void setMaze(Maze maze) {
-		// TODO Auto-generated method stub
-
+		referenceMaze = maze;
 	}
 	
 	/**
@@ -55,8 +61,22 @@ public class Wizard implements RobotDriver {
 	 */
 	@Override
 	public boolean drive2Exit() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		int[] neighbor = new int[2];
+		while(referenceMaze.getDistanceToExit((robot.getCurrentPosition())[0], (robot.getCurrentPosition())[1])!=0) {
+			neighbor = referenceMaze.getNeighborCloserToExit((robot.getCurrentPosition())[0], (robot.getCurrentPosition())[1]);
+			if(neighbor[0] == robot.getCurrentPosition()[0]++) {
+				robot.rotate(Turn.RIGHT);
+				robot.move(1);
+			}
+			else if(neighbor[0] == robot.getCurrentPosition()[0]--) {
+				robot.rotate(Turn.LEFT);
+				robot.move(1);
+			}
+			else if(neighbor[1] == robot.getCurrentPosition()[1]++) {
+				robot.move(1);
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -79,8 +99,25 @@ public class Wizard implements RobotDriver {
 	 */
 	@Override
 	public boolean drive1Step2Exit() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		int[] neighbor = new int[2];
+		CardinalDirection cardinalDirection;
+		if(referenceMaze.getDistanceToExit((robot.getCurrentPosition())[0], (robot.getCurrentPosition())[1])!=0) {
+			neighbor = referenceMaze.getNeighborCloserToExit((robot.getCurrentPosition())[0], (robot.getCurrentPosition())[1]);
+			if(neighbor[0] == robot.getCurrentPosition()[0]++) {
+				robot.rotate(Turn.RIGHT);
+				robot.move(1);
+			}
+			else if(neighbor[0] == robot.getCurrentPosition()[0]--) {
+				robot.rotate(Turn.LEFT);
+				robot.move(1);
+			}
+			else if(neighbor[1] == robot.getCurrentPosition()[1]++) {
+				robot.move(1);
+			} return true;
+		} else {
+			if(referenceMaze.hasWall(getPathLength(), getPathLength(), cardinalDirection))
+		}
+		return true;
 	}
 	
 	/**
@@ -93,7 +130,7 @@ public class Wizard implements RobotDriver {
 	@Override
 	public float getEnergyConsumption() {
 		// TODO Auto-generated method stub
-		return 0;
+		return robot.getBatteryLevel();
 	}
 	
 	/**

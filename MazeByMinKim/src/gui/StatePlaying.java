@@ -402,7 +402,7 @@ public class StatePlaying implements State {
      * @param dir is the direction of interest, either 1 or -1
      * @return true if there is no wall in this direction, false otherwise
      */
-    protected boolean wayIsClear(int dir) {
+    public boolean wayIsClear(int dir) {
         switch (dir) {
         case 1: // forward
         	return !maze.hasWall(px, py, cd);
@@ -431,7 +431,7 @@ public class StatePlaying implements State {
      * updates the screen and the internal direction
      * @param dir for current direction, values are either 1 or -1
      */
-    private synchronized void rotate(int dir) {
+     public synchronized void rotate(int dir) {
         final int originalAngle = cd.angle();//angle;
         final int steps = 4;
         int angle = originalAngle; // just in case for loop is skipped
@@ -456,7 +456,7 @@ public class StatePlaying implements State {
      * updates the screen and the internal position
      * @param dir, only possible values are 1 (forward) and -1 (backward)
      */
-    private synchronized void walk(int dir) {
+    public synchronized void walk(int dir) {
     	// check if there is a wall in the way
         if (!wayIsClear(dir))
             return;
