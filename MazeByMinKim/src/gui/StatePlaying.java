@@ -168,9 +168,9 @@ public class StatePlaying implements State {
         this.panel = panel;
         //
         // adjust visibility settings to default values
-        showMaze = false ;
-        showSolution = false ;
-        mapMode = false;
+        showMaze = true ;
+        showSolution = true ;
+        mapMode = true;
         
         // adjust internal state of maze model
         // init data structure for visible walls

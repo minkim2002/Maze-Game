@@ -2,9 +2,12 @@ package gui;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.imageio.plugins.tiff.ExifGPSTagSet;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import generation.CardinalDirection;
 import generation.DefaultOrder;
 import generation.Maze;
 import generation.MazeFactory;
@@ -36,7 +39,7 @@ class WizardTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		robot = new ReliableRobot();
-		Wizard wizard = new Wizard();
+		wizard = new Wizard();
 
 		control = new Control();
 		control.deterministic = true;
@@ -77,11 +80,34 @@ class WizardTest {
     	reliableSensorBackward.setMaze(maze);	
     	
     	robot.setController(control);
-    	wizard = new Wizard();
     	wizard.setMaze(maze);
     	wizard.setRobot(robot);
 	}
 	
+	@Test
+	final void checkDrive() {
+		int[] exitPosition = wizard.referenceMaze.getExitPosition();
+		CardinalDirection cd;
+		
+		if(exitPosition[1] == 0 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.North)){
+			cd = CardinalDirection.North;
+		} else if(exitPosition[0] == 0 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.West)) {
+			cd = CardinalDirection.West;
+		} else if(exitPosition[1] == maze.getHeight()-1 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.South)) {
+			cd = CardinalDirection.South;
+		} else {
+			cd = CardinalDirection.East;
+		}
+		try {
+			boolean isWorking = wizard.drive2Exit();
+			assertTrue(isWorking);
+			int[] currentPosition = wizard.robot.getCurrentPosition();
+			assertEquals(currentPosition, exitPosition);
+			assertEquals(wizard.robot.getCurrentDirection(), cd);
+		} catch (Exception e) {
+			
+		}
+	}
 	/**
 	 * Test if the drive2Exit method is functioning well.
 	 */
@@ -108,12 +134,14 @@ class WizardTest {
 		}
 	}
 	
+	
 	/**
 	 * Test if the getEnergyConsumption method is getting a correct energy consumption.
 	 */
 	@Test
 	final void testGetEnergyConsumption() {
-		// TODO Auto-generated method stub
+		control.robot.move(1);
+		assertEquals(6, wizard.getEnergyConsumption());
 	}
 	
 	/**
@@ -121,7 +149,7 @@ class WizardTest {
 	 */
 	@Test
 	final void testGetPathLength() {
-		// TODO Auto-generated method stub
+		assertEquals(control.robot.getOdometerReading(), wizard.getPathLength());
 	}
 
 }

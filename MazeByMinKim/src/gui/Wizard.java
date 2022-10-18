@@ -25,9 +25,9 @@ import gui.Robot.Turn;
 
 public class Wizard implements RobotDriver {
 
-	private Robot robot;
-	private Maze referenceMaze;
-	private float initialBattery;
+	protected Robot robot;
+	protected Maze referenceMaze;
+	protected float initialBattery;
 
 	/**
 	 * Assigns a robot platform to the driver. The driver uses a robot to perform,
@@ -158,7 +158,7 @@ public class Wizard implements RobotDriver {
 	 * Rotates the robot to face the exit and then move once to exit
 	 * @param currentPosition of the robot at the exit
 	 */
-	private void exit2End(int[] currentPosition) {
+	protected boolean exit2End(int[] currentPosition) {
 		// check whether the direction has a wall and the adjacent cell is outside the maze
 		while (referenceMaze.hasWall(currentPosition[0], currentPosition[1], robot.getCurrentDirection()) 
 			|| !isNeighborOutsideMaze(currentPosition, robot.getCurrentDirection())) {
@@ -166,6 +166,7 @@ public class Wizard implements RobotDriver {
 		}
 		// exit
 		robot.move(1);
+		return true;
 	}
 	
 	/**
