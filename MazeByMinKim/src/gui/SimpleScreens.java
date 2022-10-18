@@ -191,7 +191,7 @@ public class SimpleScreens {
 	
 	private void centerString(Graphics g, String str, int ypos) {
 		g.drawString(str, 
-				(Constants.VIEW_WIDTH-g.getFontMetrics().stringWidth(str))/2, 
+				(Constants.VIEW_WIDTH-g.getFontMetrics().stringWidth(str))/2,
 				ypos);
 	}
 
