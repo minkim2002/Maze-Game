@@ -32,10 +32,6 @@ public class ReliableSensorTest extends ReliableSensor {
 	private ReliableSensor reliableSensorLeft;
 	private ReliableSensor reliableSensorRight;
 	
-	/**
-	 * Set up the maze and create a new reliable sensor to simulate a robot
-	 * inside the maze for each test 
-	 */
 	@BeforeEach
 	public final void setUp() {
 		robot = new ReliableRobot();
@@ -82,9 +78,9 @@ public class ReliableSensorTest extends ReliableSensor {
     	robot.setController(control);
 	}
 	
+	
 	/**
-	 * Test if the method correctly returns the distance from the obstacle to the direction 
-	 * the robot is looking at.
+	 * Test if the method doesn't worn when it has no power
 	 */
 	@Test
 	final void TestDistanceToObstacleNoPower() {
@@ -99,8 +95,7 @@ public class ReliableSensorTest extends ReliableSensor {
 	}
 	
 	/**
-	 * Test if the method correctly returns the distance from the obstacle to the direction 
-	 * the robot is looking at.
+	 * Test if the method doen't work when there is no reference for power
 	 */
 	@Test
 	final void TestDistanceToObstaclePowerisNull() {
@@ -114,6 +109,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		assertEquals(true, isOut);
 	}
 	
+	/**
+	 * Test if the method doen't work when the sensor is not operational
+	 */
 	@Test
 	final void TestDistanceToObstacleNoOperational() {
 		boolean isOper = true;
@@ -127,6 +125,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		assertEquals(false, isOper);
 	}
 	
+	/**
+	 * Test if the method doen't work when it doesn't have enough power for sensing
+	 */
 	@Test
 	final void TestDistanceToObstacleNotEnoughPower() {
 		boolean isLow = false;
@@ -140,6 +141,10 @@ public class ReliableSensorTest extends ReliableSensor {
 		assertEquals(true, isLow);
 	}
 	
+	/**
+	 * Test if the method correctly returns the distance, that is not infinity,
+	 * when it has all the information it needs
+	 */
 	@Test
 	final void TestDistanceToObstacle() {
 		float[] power = {100};
@@ -150,6 +155,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		}
 	}
 	
+	/**
+	 * Test if the method correctly returns the distance, with the left sensor of the robot
+	 */
 	@Test
 	final void TestNorth() {
 		float[] power = {100};
@@ -161,6 +169,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		
 	}
 	
+	/**
+	 * Test if the method correctly returns the distance, with the back sensor of the robot
+	 */
 	@Test
 	final void TestWest() {
 		float[] power = {100};
@@ -172,6 +183,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		
 	}
 	
+	/**
+	 * Test if the method correctly returns the distance, with the right sensor of the robot
+	 */
 	@Test
 	final void TestSouth() {
 		float[] power = {100};
@@ -184,42 +198,9 @@ public class ReliableSensorTest extends ReliableSensor {
 		
 	}
 	
-	@Test
-	final void TestSenseNorth() {
-		float[] power = {100};
-		state.cd = CardinalDirection.North;
-		try {
-			assertEquals(robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(), power)<Integer.MAX_VALUE, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	@Test
-	final void TestSenseWest() {
-		float[] power = {100};
-		state.cd = CardinalDirection.West;
-		try {
-			assertEquals(robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(), power)<Integer.MAX_VALUE, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	@Test
-	final void TestSenseSouth() {
-		float[] power = {100};
-		state.cd = CardinalDirection.South;
-		try {
-			assertEquals(robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(), power)<Integer.MAX_VALUE, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
+	/**
+	 * Test if the sensor is not taking null reference of the maze.
+	 */
 	@Test
 	final void TestSetNullMaze() {
 		Maze maze = null;
@@ -234,8 +215,8 @@ public class ReliableSensorTest extends ReliableSensor {
 	}
 
 	/**
-	 * Test if the direction of each sensor depends on the cardinal
-	 * direction the robot is looking at is set. 
+	 * Test if the sensor is not working without specifying the actual direction
+	 * it will be mounted on
 	 */
 	@Test
 	final void TestSetNullSensorDirection() {

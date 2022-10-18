@@ -84,6 +84,17 @@ class WizardTest {
     	wizard.setRobot(robot);
 	}
 	
+	/**
+	 * Test if the entire wizard algorithm is working correctly. Find an exit position by using
+	 * the information from the reference maze. Then, identify which direction is the exit.
+	 * 
+	 * By using the drive2Exit method, the robot will arrive at the exit position, 
+	 * and compare the robot's position and the actual exit position. 
+	 * If it matches, algorithm works.
+	 * 
+	 * Compare the robot's direction and the actual direction of the exit. 
+	 * It it matches, algorithm works.
+	 */
 	@Test
 	final void checkDrive() {
 		int[] exitPosition = wizard.referenceMaze.getExitPosition();
@@ -108,8 +119,10 @@ class WizardTest {
 			
 		}
 	}
+	
 	/**
-	 * Test if the drive2Exit method is functioning well.
+	 * Test if the drive2Exit method is functioning well, which means
+	 * it successfully leads the robot out of the maze.
 	 */
 	@Test
 	final void testDrive2Exit() {
