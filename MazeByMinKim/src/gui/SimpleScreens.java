@@ -53,7 +53,7 @@ public class SimpleScreens {
         }
     }
     /**
-     * Helper method for redraw to draw the title screen, screen is hard coded
+     * Helper method for redraw to draw the title screen
      * @param  gc graphics is the off-screen image, can not be null
      * @param filename is a string put on display for the file
      * that contains the maze, can be null
@@ -108,24 +108,20 @@ public class SimpleScreens {
 	}
 
     /**
-     * Draws the finish screen, screen content is hard coded
-     * @param panel holds the graphics for the off-screen image
+     * Draws the finish screen
+     * @param panel holds the graphics 
      */
 	public void redrawFinish(MazePanel panel, boolean failure, int pathLength, float energyConsumption) {
-		Graphics g = panel.getBufferGraphics() ;
-        if (null == g) {
+		Graphics graphics = panel.getBufferGraphics() ;
+        if (null == graphics) {
             System.out.println(errorMsg) ;
         }
         else {
-            redrawFinish(g, failure, pathLength, energyConsumption);
+            redrawFinish(graphics, failure, pathLength, energyConsumption);
         }
 	}
-	/**
-	 * Helper method for redraw to draw final screen, screen is hard coded
-	 * @param gc graphics is the off-screen image
-	 */
+
 	private void redrawFinish(Graphics gc, boolean failure, int pathLength, float energyConsumption) {
-		// produce blue background
 		drawBackground(gc);
 		if (!failure) {
 			// write the title 
@@ -135,24 +131,26 @@ public class SimpleScreens {
 			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
 			centerString(gc, "Congratulations!", 160);
 			// write the path length and battery level (if robot driver was used)
-			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
-			centerString(gc, "Path length: " + pathLength, 210);
 			if (energyConsumption != 0) {
 				updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
 				centerString(gc, "Energy consumption: " + energyConsumption, 230);
 			}
+			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
+			centerString(gc, "Path length: " + pathLength, 210);
+			
 		} else {
 			// write the title 
 			updateFontAndColor(gc, largeBannerFont, MazeColors.TITLE_LARGE);
-			centerString(gc, "You lost!", 100);
+			centerString(gc, "You lost...", 100);
 			// write some extra blurb
 			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
-			centerString(gc, "Failure by energy depletion or crash!", 160);
+			centerString(gc, "Failure by energy depletion or crash...", 160);
 			// write the path length and battery level (if robot driver was used)
 			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
-			centerString(gc, "Path length: " + pathLength, 210);
-			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
 			centerString(gc, "Energy consumption: " + energyConsumption, 230);
+			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
+			centerString(gc, "Path length: " + pathLength, 210);
+			
 		}
 		// write the instructions
 		gc.setColor(Color.decode("#222222"));
