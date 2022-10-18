@@ -249,15 +249,5 @@ public class ReliableSensorTest extends ReliableSensor {
 		assertEquals(isNull, true);
 
 	}
-	
-	/**
-	 * Test if the method is getting the correct numeric 
-	 * value of the amount of energy consumption for
-	 * sensing
-	 */
-	@Test
-	final void TestGetEnergyConsumptionForSensing() {
-		// TODO Auto-generated method stub
-	}
 
 }

@@ -25,17 +25,16 @@ import gui.Robot.Turn;
 
 public class Wizard implements RobotDriver {
 
+	private Robot robot;
+	private Maze referenceMaze;
+	private float initialBattery;
+
 	/**
 	 * Assigns a robot platform to the driver. The driver uses a robot to perform,
 	 * this method provides it with this necessary information.
 	 * 
 	 * @param r robot to operate
 	 */
-
-	private Robot robot;
-	private Maze referenceMaze;
-	private float initialBattery;
-
 	@Override
 	public void setRobot(Robot r) {
 		robot = r;
@@ -63,22 +62,21 @@ public class Wizard implements RobotDriver {
 	 * this.
 	 * 
 	 * @return true if driver successfully reaches the exit, false otherwise
-	 * @throws Exception thrown if robot stopped due to some problem, e.g. lack of
-	 *                   energy
+	 * @throws Exception thrown if robot stopped due to some problem.
 	 */
 	@Override
 	public boolean drive2Exit() throws Exception {
-		// while the robot hasn't stopped
 		while (!robot.hasStopped()) {
 			int[] currentPosition;
-			// try to get to the exit by running drive1Step2Exit
+			// run drive1Step2Exit
 			try {
 				drive1Step2Exit();
+				// update position
 				currentPosition = robot.getCurrentPosition();
 			} catch (Exception e) {
 				throw new Exception();
 			}
-			// check if it has reached the exit and return true if so
+			// check if it has reached the exit
 			if (robot.isAtExit()) {
 				// cross the exit to win the game
 				exit2End(currentPosition);
@@ -145,15 +143,53 @@ public class Wizard implements RobotDriver {
 				robot.rotate(Turn.RIGHT);
 			break;
 		}
-		// move to the cell by taking a step or jumping
+		// move by either jumping or moving
 		if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], currentDirection))
 			robot.jump();
 		else
 			robot.move(1);
-		// if robot is stopped, then throw an exception
+		// throw an exception when robot has stopped
 		if (robot.hasStopped())
 			throw new Exception();
 		return true;
+	}
+	
+	/**
+	 * Rotates the robot to face the exit and then move once to exit
+	 * @param currentPosition of the robot at the exit
+	 */
+	private void exit2End(int[] currentPosition) {
+		// check whether the direction has a wall and the adjacent cell is outside the maze
+		while (referenceMaze.hasWall(currentPosition[0], currentPosition[1], robot.getCurrentDirection()) 
+			|| !isNeighborOutsideMaze(currentPosition, robot.getCurrentDirection())) {
+			robot.rotate(Turn.LEFT);
+		}
+		// exit
+		robot.move(1);
+	}
+	
+	/**
+	 * Check if the neighbor of the current cell is outside of the maze.
+	 * @param currentPosition of the robot
+	 * @param currentDirection the direction used
+	 * @return whether the neighbor is outside of the maze
+	 */
+	private boolean isNeighborOutsideMaze(int[] currentPosition, CardinalDirection currentDirection) {
+		switch (currentDirection) {
+		case North:
+			if (currentPosition[1]-1<0) return true;
+			break;
+		case East:
+			if (currentPosition[0]+1>=referenceMaze.getWidth()) return true;
+			break;
+		case South:
+			if (currentPosition[1]+1>=referenceMaze.getHeight()) return true;
+			break;
+		case West:
+			if (currentPosition[0]-1<0) return true;
+			break;
+		}
+		return false;
 	}
 
 	/**
@@ -182,45 +218,5 @@ public class Wizard implements RobotDriver {
 		// TODO Auto-generated method stub
 		return robot.getOdometerReading();
 	}
-	
-	/**
-	 * Rotates the robot to face the exit and then move one step to step past the exit and win
-	 * @param currentPosition of the robot (exit)
-	 */
-	private void exit2End(int[] currentPosition) {
-		// check whether the direction has a wall and the adjacent cell is outside the maze
-		while (referenceMaze.hasWall(currentPosition[0], currentPosition[1], robot.getCurrentDirection()) 
-			|| !isNeighborOutsideMaze(currentPosition, robot.getCurrentDirection())) {
-			robot.rotate(Turn.LEFT);
-		}
-		robot.move(1);
-	}
-	
-	/**
-	 * Determines if the neighbor of the current cell is outside of the maze.
-	 * Helper method for crossExit2Win
-	 * @param currentPosition of the robot (exit)
-	 * @param currentDirection the direction being examined
-	 * @return whether the neighbor is outside of the maze
-	 */
-	private boolean isNeighborOutsideMaze(int[] currentPosition, CardinalDirection currentDirection) {
-		switch (currentDirection) {
-		case North:
-			if (currentPosition[1]-1<0) return true;
-			break;
-		case East:
-			if (currentPosition[0]+1>=referenceMaze.getWidth()) return true;
-			break;
-		case South:
-			if (currentPosition[1]+1>=referenceMaze.getHeight()) return true;
-			break;
-		case West:
-			if (currentPosition[0]-1<0) return true;
-			break;
-		}
-		return false;
-	}
-	
-	
 
 }

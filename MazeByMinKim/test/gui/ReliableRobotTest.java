@@ -2,7 +2,6 @@ package gui;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import javax.management.relation.RoleInfoNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

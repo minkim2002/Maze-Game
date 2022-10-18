@@ -53,15 +53,21 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void setController(Control controller) {
-		// check if controller is null, controller is not in playing state, or it
-		// doesn't have a maze
+		
+		// check if controller is null, controller is not in a playing state, or it doesn't have a maze
 		if (controller == null || !(controller.currentState instanceof StatePlaying) || controller.getMaze() == null)
 			throw new IllegalArgumentException();
 		control = controller;
+		
+		//set traveled distance to zero
 		resetOdometer();
+		
+		//get the maze and its information
 		referenceMaze = controller.getMaze();
 		width = referenceMaze.getWidth();
 		height = referenceMaze.getHeight();
+		
+		//set each sensor for each direction, 4 in total
 		reliableSensorForward.setMaze(referenceMaze);
 		reliableSensorLeft.setMaze(referenceMaze);
 		reliableSensorBackward.setMaze(referenceMaze);
@@ -74,9 +80,9 @@ public class ReliableRobot implements Robot {
 	 * ready for operation. A robot can have at most four sensors in total, and at
 	 * most one for any direction.
 	 * 
-	 * @param sensor           the distance sensor to be added
+	 * @param sensor the distance sensor to be added
 	 * @param mountedDirection the direction that it points to relative to the
-	 *                         robot's forward direction
+	 * robot's forward direction
 	 */
 	@Override
 	public void addDistanceSensor(DistanceSensor sensor, Direction mountedDirection) {
@@ -95,8 +101,7 @@ public class ReliableRobot implements Robot {
 	}
 
 	/**
-	 * Get the current position as (x,y) coordinates for the maze as an array of
-	 * length 2 with [x,y].
+	 * Get the current position as (x,y) coordinates for the maze as an array
 	 * 
 	 * @return array of length 2, x = array[0], y = array[1]
 	 * @throws Exception if position is outside of the maze
@@ -104,6 +109,7 @@ public class ReliableRobot implements Robot {
 	@Override
 	public int[] getCurrentPosition() throws Exception {
 		int[] currentPosition = control.getCurrentPosition();
+		
 		// check if the current position is outside of the maze
 		if (currentPosition[0] < 0 || currentPosition[0] >= width || currentPosition[1] < 0
 				|| currentPosition[1] >= height) {
@@ -139,7 +145,7 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void setBatteryLevel(float level) {
-		// check if level is negative
+		// check if battery level is negative
 		if (level < 0) {
 			throw new IllegalArgumentException();
 		}
@@ -197,13 +203,14 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void rotate(Turn turn) {
-		// check battery level beforehand
+		// check battery level
 		if (getBatteryLevel() < 3 || (turn == Turn.AROUND && getBatteryLevel() < 6)) {
 			setBatteryLevel(0);
 			isStopped = true;
 			return;
 		}
-		// use control to turn the robot and update the battery level
+		
+		// Turn the robot and update the battery level
 		switch (turn) {
 		case LEFT:
 			setBatteryLevel(getBatteryLevel() - 3);
@@ -219,6 +226,7 @@ public class ReliableRobot implements Robot {
 			control.handleKeyboardInput(UserInput.LEFT, 0);
 			break;
 		}
+		
 		// check if the battery level is 0 and stop the robot if so
 		if (getBatteryLevel() == 0) {
 			isStopped = true;
@@ -239,19 +247,21 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void move(int distance) {
+		//Check battery
 		if (getBatteryLevel() < 6) {
 			setBatteryLevel(0);
 			isStopped = true;
 			return;
 		}
+		
 		// create a new variable to keep track of distance moved
 		int distanceMoved = 0;
+		
 		// while the distance moved is less than the inputed distance
 		while (distanceMoved < distance) {
 			try {
 				int[] currentPosition = getCurrentPosition();
-				// check if there is an obstacle (wall) directly in front of the robot
-				// and stop if so
+				// check if there is an obstacle in front of the robot and stop if so 
 				if (distanceMoved != distance
 						&& referenceMaze.hasWall(currentPosition[0], currentPosition[1], getCurrentDirection())) {
 					setBatteryLevel(0);
@@ -262,14 +272,13 @@ public class ReliableRobot implements Robot {
 				System.out.println("outside Maze");
 				return;
 			}
-			// move the robot one step forward and update the distance traveled and battery
-			// level
+			// move the robot one step forward and update the distance traveled and battery level
 			control.handleKeyboardInput(UserInput.UP, 0);
 			distanceTraveled++;
 			distanceMoved++;
 			setBatteryLevel(getBatteryLevel() - 6);
-			// check if the energy has been depleted and stop if so
-			// (make sure to break out of the loop)
+			
+			// check if the energy has been run out and stop if so
 			if (getBatteryLevel() == 0) {
 				isStopped = true;
 				break;
@@ -295,7 +304,7 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public void jump() {
-		// check battery level beforehand
+		// check battery
 		if (getBatteryLevel() < 40) {
 			setBatteryLevel(0);
 			isStopped = true;
@@ -303,7 +312,7 @@ public class ReliableRobot implements Robot {
 		}
 		try {
 			int[] currentPosition = getCurrentPosition();
-			// check if the wall in front is an exterior wall and stop if so
+			// check if the wall in front is a border and stop if so
 			switch (getCurrentDirection()) {
 			case North:
 				if (referenceMaze.hasWall(currentPosition[0], currentPosition[1], CardinalDirection.North)
@@ -342,7 +351,8 @@ public class ReliableRobot implements Robot {
 			System.out.println("Outside maze");
 			return;
 		}
-		// execute the jump and update the distance traveled and battery level
+		
+		// jump and update the distance traveled and battery level
 		control.handleKeyboardInput(UserInput.JUMP, 0);
 		distanceTraveled++;
 		setBatteryLevel(getBatteryLevel() - 40);
@@ -418,6 +428,7 @@ public class ReliableRobot implements Robot {
 	 */
 	@Override
 	public int distanceToObstacle(Direction direction) throws UnsupportedOperationException {
+		
 		int[] currentPosition;
 		try {
 			currentPosition = getCurrentPosition();
@@ -425,18 +436,20 @@ public class ReliableRobot implements Robot {
 			System.out.println("Outside maze");
 			return -1;
 		}
+		
 		float[] batteryLevel = {getBatteryLevel()};
 		int distance = 0;
+		//pass it to a specific sensor depends on the direction
 		try {
 			switch (direction) {
+			case FORWARD:
+				distance = reliableSensorForward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				break;
 			case LEFT:
 				distance = reliableSensorLeft.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			case RIGHT:
 				distance = reliableSensorRight.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
-				break;
-			case FORWARD:
-				distance = reliableSensorForward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			case BACKWARD:
 				distance = reliableSensorBackward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);

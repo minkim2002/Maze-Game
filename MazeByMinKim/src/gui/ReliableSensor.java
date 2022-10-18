@@ -23,25 +23,31 @@ import gui.Robot.Direction;
 public class ReliableSensor implements DistanceSensor {
 	
 	
-	Maze referenceMaze; 
+	protected Maze referenceMaze; 
 	private int width;
 	private int height;
+	
 	protected Direction referenceDirection;
+	
 	protected boolean isOperational; 
 	
+	//Map of Cardinal Direction with an integer list as a key
 	private Map<ArrayList<Integer>, CardinalDirection> getDirMap;
+	//Map of Integer list with a Cardinal Direction as a key
 	private Map<CardinalDirection, ArrayList<Integer>> getCoordMap;
 	
-	
+	//Constructor without parameter
 	public ReliableSensor() {
 		isOperational = true;
 		mapping();
 	}
 	
+	//Constructor with a direction parameter
 	public ReliableSensor(Direction direction) {
 		this();
 		setSensorDirection(direction);
 	}
+	
 	
 	/**
 	 * returns the distance from the obstacle to the direction 
@@ -52,8 +58,6 @@ public class ReliableSensor implements DistanceSensor {
 	 * @param powersupply current power the robot has
 	 * @return integer value of the distance
 	 */
-	
-	
 	@Override
 	public int distanceToObstacle(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply)
 			 throws Exception{
@@ -61,23 +65,24 @@ public class ReliableSensor implements DistanceSensor {
 		if (powersupply[0] < 0) {
 			throw new IndexOutOfBoundsException();
 		}
-		// check if any of the parameters are null or if currentPosition is outside of the maze
+		// check if any of these parameters are null or if current position is outside of the maze
 		if (currentPosition == null || currentDirection == null || powersupply == null ||
 			currentPosition[0] < 0 || currentPosition[0] >= width || currentPosition[1] < 0 || currentPosition[1] >= height) {
 			throw new IllegalArgumentException();
 		}
-		// check if sensor is not operational or the power is not enough for sensing
+		// check if the sensor is not operational or the power is not enough for sensing
 		if (!isOperational) {
 			throw new Exception("SensorFailure");
 		}
 		if (powersupply[0] < getEnergyConsumptionForSensing()) {
 			throw new Exception("PowerFailure");
 		}
-		// figure out which absolute (cardinal) direction we should move in
+		// figure out which fixed direction we should move in
 		CardinalDirection currentDir = convertToFixedDir(referenceDirection, currentDirection);
+		
 		// keep track of the distance with a counter
 		int distance = 0;
-		// while there isn't a wallboard in the given direction
+		
 		while (!referenceMaze.hasWall(currentPosition[0], currentPosition[1], currentDir)) {
 			distance = sense(currentPosition, currentDir, powersupply, distance);
 			if (distance == Integer.MAX_VALUE) {
@@ -90,8 +95,7 @@ public class ReliableSensor implements DistanceSensor {
 	
 	protected int sense(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply, int distance)
 			throws Exception {
-		// check if the next cell is outside of the maze (meaning the current cell is located at the exit) and
-		// return Integer.MAX_VALUE if so
+		// check if the next cell is outside of the maze then return Integer.MAX_VALUE
 		// else sense the next cell and update the distance counter
 		switch (currentDirection) {
 			case North:
@@ -145,7 +149,7 @@ public class ReliableSensor implements DistanceSensor {
 	 */
 	@Override
 	public void setMaze(Maze maze) {
-		if(maze==null || maze.getFloorplan() == null) {
+		if(maze == null || maze.getFloorplan() == null) {
 			throw new IllegalArgumentException();
 		}
 		this.referenceMaze = maze;
@@ -155,6 +159,7 @@ public class ReliableSensor implements DistanceSensor {
 
 	/**
 	 * Set the direction of each sensor.
+	 * @param mountedDirection the direction relative to the robot of the sensor that will be mounted on the robot.
 	 */
 	@Override
 	public void setSensorDirection(Direction mountedDirection) {
@@ -167,6 +172,7 @@ public class ReliableSensor implements DistanceSensor {
 	/**
 	 * Get the numeric value of the amount of energy consumption for
 	 * sensing
+	 * @return Amount of energy consumed for each sensing
 	 */
 	@Override
 	public float getEnergyConsumptionForSensing() {
@@ -187,18 +193,16 @@ public class ReliableSensor implements DistanceSensor {
 	}
 	
 	/**
-	 * Creates the maps to store the mappings used in the convertToAbsoluteDirection method
+	 * Creates the maps to store the mappings used in the convertToFixedDir method
 	 */
 	protected void mapping() {
-		
-		// all of the CardinalDirections in the order that will map consistently to the transformations
 		CardinalDirection[] carDirs = {CardinalDirection.North, CardinalDirection.West, CardinalDirection.East, CardinalDirection.South};
 		int cardirIdx = 0;
+		
 		// map coordinates involving only +/-1 to each direction 
 		getDirMap = new HashMap<ArrayList<Integer>, CardinalDirection>();
 		// map each direction to its coordinates
 		getCoordMap = new HashMap<CardinalDirection, ArrayList<Integer>>();
-		
 		
 		int[] range = {-1, 1};
 		for (int i = 0; i <= 1; i++) {
@@ -213,11 +217,11 @@ public class ReliableSensor implements DistanceSensor {
 		}
 	}
 	
+	
 	/**
-	 * Converts a relative direction to an absolute direction based on the current CardinalDirection
-	 * @param direction that we want to use for the conversion
-	 * @param currDir is the current direction of the robot, we use this in conjunction with the relative direction
-	 * to obtain the new absolute (cardinal) direction
+	 * Converts a relative direction to a fixed direction based on the current CardinalDirection
+	 * @param direction the direction used for the conversion
+	 * @param currentDirection the current direction of the robot
 	 * @return CardinalDirection of the relative direction
 	 */
 	protected CardinalDirection convertToFixedDir(Direction direction, CardinalDirection currentDirection) {
