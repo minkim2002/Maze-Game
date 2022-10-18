@@ -175,7 +175,7 @@ public class Wizard implements RobotDriver {
 	 * @param currentDirection the direction used
 	 * @return whether the neighbor is outside of the maze
 	 */
-	private boolean isNeighborOutsideMaze(int[] currentPosition, CardinalDirection currentDirection) {
+	protected boolean isNeighborOutsideMaze(int[] currentPosition, CardinalDirection currentDirection) {
 		switch (currentDirection) {
 		case North:
 			if (currentPosition[1]-1<0) return true;

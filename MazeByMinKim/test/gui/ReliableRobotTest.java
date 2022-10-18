@@ -32,7 +32,8 @@ class ReliableRobotTest {
 	public final void setUp() {
 		robot = new ReliableRobot();
 		Wizard wizard = new Wizard();
-
+		
+		//Get a reference of Control
 		control = new Control();
 		control.deterministic = true;
 		control.setRobotAndDriver(robot, wizard);
@@ -42,6 +43,7 @@ class ReliableRobotTest {
 		MazeFactory mazeFactory = new MazeFactory();
 		DefaultOrder mazeOrder = new DefaultOrder();
 		
+		//Order Maze
 		mazeFactory.order(mazeOrder);
 		mazeFactory.waitTillDelivered();
 		
@@ -50,22 +52,25 @@ class ReliableRobotTest {
 		
 		control.setState(state);
 		
-		
+		//Set up forward Sensor
 		ReliableSensor reliableSensorForward = new ReliableSensor();
     	reliableSensorForward.setSensorDirection(Direction.FORWARD);
     	robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
     	reliableSensorForward.setMaze(maze);
     	
+    	//Set up Left Sensor
     	ReliableSensor reliableSensorLeft = new ReliableSensor();
     	reliableSensorLeft.setSensorDirection(Direction.LEFT);
     	robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
     	reliableSensorLeft.setMaze(maze);
     	
+    	//Set up Right Sensor
     	ReliableSensor reliableSensorRight = new ReliableSensor();
     	reliableSensorRight.setSensorDirection(Direction.RIGHT);
     	robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
     	reliableSensorRight.setMaze(maze);
     	
+    	//Set up Backward Sensor
     	ReliableSensor reliableSensorBackward = new ReliableSensor();
     	reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
     	robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
@@ -90,8 +95,9 @@ class ReliableRobotTest {
 		assertEquals(isNull, true);
 	}
 	
+	
 	/**
-	 * Test whether the setController method provides actual maze.
+	 * Test whether the setController method provides the actual maze.
 	 */
 	@Test
 	final void TestSetMazeNullController() {
@@ -451,7 +457,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells 
+	 * Test if the isAtExit method accurately tells 
 	 * if the current position is right at the exit but still inside the maze. 
 	 */
 	@Test
@@ -466,7 +472,7 @@ class ReliableRobotTest {
 	
 	
 	/**
-	 * Test if the method accurately tells if current position is inside a room. 
+	 * Test if the isInsideRoom method accurately tells if current position is inside a room. 
 	 */	
 	@Test
 	final void TestIsInsideRoom() {
@@ -480,7 +486,7 @@ class ReliableRobotTest {
 	
 	
 	/**
-	 * Test if the method accurately tells if the robot has stopped for reasons like lack of energy, 
+	 * Test if the hasStopped method accurately tells if the robot has stopped for reasons like lack of energy, 
 	 */
 	@Test
 	final void TestHasStopped() {
@@ -489,7 +495,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells the distance to an obstacle (a wall) 
+	 * Test if the distanceToObstacle method accurately tells the distance to an obstacle (a wall) 
 	 * in the forward direction.
 	 */
 	@Test
@@ -498,7 +504,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells the distance to an obstacle (a wall) 
+	 * Test if the distanceToObstacle method accurately tells the distance to an obstacle (a wall) 
 	 * in the backward direction.
 	 */
 	@Test
@@ -507,7 +513,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells the distance to an obstacle (a wall) 
+	 * Test if the distanceToObstaclemethod accurately tells the distance to an obstacle (a wall) 
 	 * in the left direction.
 	 */
 	@Test
@@ -516,7 +522,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells the distance to an obstacle (a wall) 
+	 * Test if the distanceToObstacle method accurately tells the distance to an obstacle (a wall) 
 	 * in the right direction.
 	 */
 	@Test
@@ -525,7 +531,7 @@ class ReliableRobotTest {
 	}
 	
 	/**
-	 * Test if the method accurately tells if a sensor can identify the exit 
+	 * Test if the canSeeThroughTheExitIntoEternity method accurately tells if a sensor can identify the exit 
 	 * in the given direction relative to 
 	 * the robot's current forward direction from the current position.
 	 */

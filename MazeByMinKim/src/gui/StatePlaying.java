@@ -213,7 +213,8 @@ public class StatePlaying implements State {
 		
 		if (control.getDriver() != null)
 			try {
-				control.driver.drive2Exit();
+				boolean isWorking = control.driver.drive2Exit();
+				assert(isWorking==true);
 			} catch (Exception e) {
 				e.printStackTrace();
 				switchFromPlayingToWinning(0);

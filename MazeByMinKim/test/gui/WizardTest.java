@@ -12,6 +12,7 @@ import generation.DefaultOrder;
 import generation.Maze;
 import generation.MazeFactory;
 import gui.Robot.Direction;
+import gui.Robot.Turn;
 
 /**
  * A set of test cases of Wizard Algorithm
@@ -40,7 +41,8 @@ class WizardTest {
 	void setUp() throws Exception {
 		robot = new ReliableRobot();
 		wizard = new Wizard();
-
+		
+		//Get a reference of Control
 		control = new Control();
 		control.deterministic = true;
 		control.setRobotAndDriver(robot, wizard);
@@ -50,6 +52,7 @@ class WizardTest {
 		MazeFactory mazeFactory = new MazeFactory();
 		DefaultOrder mazeOrder = new DefaultOrder();
 		
+		//Order Maze
 		mazeFactory.order(mazeOrder);
 		mazeFactory.waitTillDelivered();
 		
@@ -58,22 +61,25 @@ class WizardTest {
 		
 		control.setState(state);
 		
-		
+		//Set up Forward Sensor
 		reliableSensorForward = new ReliableSensor();
     	reliableSensorForward.setSensorDirection(Direction.FORWARD);
     	robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
     	reliableSensorForward.setMaze(maze);
     	
+    	//Set up Left Sensor
     	reliableSensorLeft = new ReliableSensor();
     	reliableSensorLeft.setSensorDirection(Direction.LEFT);
     	robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
     	reliableSensorLeft.setMaze(maze);
     	
+    	//Set up Right Sensor
     	reliableSensorRight = new ReliableSensor();
     	reliableSensorRight.setSensorDirection(Direction.RIGHT);
     	robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
     	reliableSensorRight.setMaze(maze);
     	
+    	//Set up Backward Sensor
     	reliableSensorBackward = new ReliableSensor();
     	reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
     	robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
@@ -135,7 +141,8 @@ class WizardTest {
 	}
 	
 	/**
-	 * Test if the drive1Step2Exit method is functioning well.
+	 * Test if the drive1Step2Exit method is functioning well, which means
+	 * it successfully leads the robot one step towards the exit.
 	 */
 	@Test
 	final void testDrive1Step2Exit(){
@@ -145,6 +152,36 @@ class WizardTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	/**
+	 * Test whether the isNeighborOutsideMaze method 
+	 * determines if the neighboring cell is outside of the maze
+	 *
+	 */
+	@Test
+	public final void testNeighborOutsideMaze() {
+		// at the starting position, only the western neighbor should be outside of the maze
+		int[] currentPosition = {0, 1};
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
+		
+		// at a position in the middle of the maze, all neighbors should be inside of the maze
+		currentPosition[0] = 1; currentPosition[1] = 2;
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
+		
+		// at the corner position, there should be exactly two neighbors outside of the maze
+		currentPosition[0] = 3; currentPosition[1] = 0;
+		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
 	}
 	
 	
