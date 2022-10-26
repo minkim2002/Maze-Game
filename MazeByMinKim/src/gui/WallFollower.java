@@ -6,7 +6,7 @@ import generation.Maze;
  * This class has the responsibility to get out of the maze.
  * 
  * This class implements RobotDriver and uses 
- * Reliable Robot to navigate through the maze.
+ * Reliable and Unreliable Robot to navigate through the maze.
  * 
  * @author Min Kim
  *
