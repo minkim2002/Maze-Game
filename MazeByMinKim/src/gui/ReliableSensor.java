@@ -29,7 +29,7 @@ public class ReliableSensor implements DistanceSensor {
 	
 	protected Direction referenceDirection;
 	
-	protected boolean isOperational; 
+	public boolean isOperational; 
 	
 	//Map of Cardinal Direction with an integer list as a key
 	private Map<ArrayList<Integer>, CardinalDirection> getDirMap;

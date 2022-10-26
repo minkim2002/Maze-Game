@@ -1,8 +1,5 @@
 package gui;
 
-import generation.CardinalDirection;
-
-import generation.Maze;
 import gui.Robot.Direction;
 
 /**
@@ -12,51 +9,71 @@ import gui.Robot.Direction;
  * to sudden failure and at some point a repair operation that brings
  * the sensor back into an operational state.
  * 
- * This class inherits ReliableRobot, implements DistanceSensor, and uses Floorplan to
- * measure distances towards obstacles.
+ * This class inherits ReliableRobot and collaborates with floor plan of Maze to
+ * measure distances towards obstacles, RepairProcess, RobotDriver(either WallFollower or Wizard),
+ * and Robot.
  * 
  * @author Min Kim
  *
  */
 
-public class UnreliableSensor extends ReliableSensor implements DistanceSensor {
-
-	@Override
-	public int distanceToObstacle(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+public class UnreliableSensor extends ReliableSensor {
+	
+	protected Thread repairCycle;
+	
+	public UnreliableSensor() {
+		super();
 	}
-
-	@Override
-	public void setMaze(Maze maze) {
-		// TODO Auto-generated method stub
-
+	
+	public UnreliableSensor(Direction direction) {
+		super(direction);
 	}
-
-	@Override
-	public void setSensorDirection(Direction mountedDirection) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public float getEnergyConsumptionForSensing() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
+	/**
+	 * Method starts a concurrent, independent failure and repair
+	 * process that makes the sensor fail and repair itself.
+	 * 
+	 * @param meanTimeBetweenFailures is the mean time in seconds, must be greater than zero
+	 * @param meanTimeToRepair is the mean time in seconds, must be greater than zero
+	 * @throws UnsupportedOperationException if method not supported
+	 */
 	@Override
 	public void startFailureAndRepairProcess(int meanTimeBetweenFailures, int meanTimeToRepair)
-			throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-
+		throws UnsupportedOperationException {
+		try {
+			//initiate the repair cycle
+			RepairCycle cycle = new RepairCycle(meanTimeBetweenFailures, meanTimeToRepair, this);
+			repairCycle = new Thread(cycle);
+			repairCycle.start();
+		} catch (Exception e) {
+			repairCycle = null;
+		}
 	}
-
+	
+	/**
+	 * Method stops a failure and repair process and
+	 * leaves the sensor in an operational state.
+	 * 
+	 * Intended use: If called after starting a process, this method
+	 * will stop the process as soon as the sensor is operational.
+	 * 
+	 * If called with no running failure and repair process, 
+	 * the method will return an UnsupportedOperationException.
+	 * 
+	 * @throws UnsupportedOperationException if method not supported
+	 */
 	@Override
 	public void stopFailureAndRepairProcess() throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-
+		if (repairCycle != null && repairCycle.isAlive()) {
+			try {
+				repairCycle.interrupt();
+				isOperational = true;
+				repairCycle = null;
+			} catch (Exception e) {
+				throw new UnsupportedOperationException();
+			}
+		} else {
+			throw new UnsupportedOperationException();
+		}
 	}
-
 }
