@@ -8,6 +8,7 @@ import generation.Floorplan;
 import generation.Maze;
 import generation.MazeFactory;
 import gui.Constants.UserInput;
+import gui.Robot.Direction;
 
 /**
  * Class handles the user interaction
@@ -248,19 +249,29 @@ public class StateGenerating extends DefaultOrder implements State {
     	assert null != maze : "StateGenerating.switchFromGeneratingToPlaying: maze must exist!";
     	// need to instantiate and configure the playing state
         StatePlaying currentState = new StatePlaying();
+        control.setState(currentState);
         
-        // The playing state needs 
-        // 1) the maze to play
-        // 
         currentState.setMaze(maze);
-        
+        if(control.robot!=null && control.driver!=null) {
+        	control.robot.setController(control);
+        	control.driver.setMaze(maze);
+        	for(Direction direction: Direction.values()) {
+        		try {
+        			System.out.println("Hi");
+					control.robot.startFailureAndRepairProcess(direction, 4000, 2000);
+					Thread.sleep(1300);
+				} catch (Exception e) {
+					System.out.println("Reliable Sensor");
+				}
+        	}
+        }
         
         
         LOGGER.fine("Control switches from generating to playing screen, maze generation completed.");
         
         // update the context class with the new state
         // and hand over control to the new state
-        control.setState(currentState);
+        
         currentState.start(control, panel);
     }
     /**
