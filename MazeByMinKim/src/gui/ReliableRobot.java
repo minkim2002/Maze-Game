@@ -23,10 +23,10 @@ import generation.Maze;
 public class ReliableRobot implements Robot {
 
 	protected Control control;
-	protected DistanceSensor reliableSensorForward;
-	protected DistanceSensor reliableSensorLeft;
-	protected DistanceSensor reliableSensorBackward;
-	protected DistanceSensor reliableSensorRight;
+	protected DistanceSensor sensorForward;
+	protected DistanceSensor sensorLeft;
+	protected DistanceSensor sensorBackward;
+	protected DistanceSensor sensorRight;
 
 	private Maze referenceMaze;
 	private int width;
@@ -68,10 +68,10 @@ public class ReliableRobot implements Robot {
 		height = referenceMaze.getHeight();
 		
 		//set each sensor for each direction, 4 in total
-		reliableSensorForward.setMaze(referenceMaze);
-		reliableSensorLeft.setMaze(referenceMaze);
-		reliableSensorBackward.setMaze(referenceMaze);
-		reliableSensorRight.setMaze(referenceMaze);
+		sensorForward.setMaze(referenceMaze);
+		sensorLeft.setMaze(referenceMaze);
+		sensorBackward.setMaze(referenceMaze);
+		sensorRight.setMaze(referenceMaze);
 	}
 
 	/**
@@ -87,16 +87,16 @@ public class ReliableRobot implements Robot {
 	@Override
 	public void addDistanceSensor(DistanceSensor sensor, Direction mountedDirection) {
 		if(mountedDirection == Direction.FORWARD) {
-			reliableSensorForward=sensor;
+			sensorForward=sensor;
 		}
 		if(mountedDirection == Direction.LEFT) {
-			reliableSensorLeft=sensor;
+			sensorLeft=sensor;
 		}
 		if(mountedDirection == Direction.RIGHT) {
-			reliableSensorRight=sensor;
+			sensorRight=sensor;
 		}
 		if(mountedDirection == Direction.BACKWARD) {
-			reliableSensorBackward=sensor;
+			sensorBackward=sensor;
 		}
 	}
 
@@ -443,16 +443,16 @@ public class ReliableRobot implements Robot {
 		try {
 			switch (direction) {
 			case FORWARD:
-				distance = reliableSensorForward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				distance = sensorForward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			case LEFT:
-				distance = reliableSensorLeft.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				distance = sensorLeft.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			case RIGHT:
-				distance = reliableSensorRight.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				distance = sensorRight.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			case BACKWARD:
-				distance = reliableSensorBackward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				distance = sensorBackward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
 				break;
 			}
 		} catch (Exception e) {

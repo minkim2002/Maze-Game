@@ -64,14 +64,14 @@ public class UnreliableSensor extends ReliableSensor {
 	 */
 	@Override
 	public void stopFailureAndRepairProcess() throws UnsupportedOperationException {
+		// check if a thread exists and is alive
 		if (repairCycle != null && repairCycle.isAlive()) {
-			try {
-				repairCycle.interrupt();
-				isOperational = true;
-				repairCycle = null;
-			} catch (Exception e) {
-				throw new UnsupportedOperationException();
-			}
+			// finish the cycle
+			repairCycle.interrupt();
+			// sensor is operational
+			isOperational = true;
+			// clean up
+			repairCycle = null;
 		} else {
 			throw new UnsupportedOperationException();
 		}

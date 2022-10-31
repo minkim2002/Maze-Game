@@ -23,17 +23,17 @@ import gui.Robot.Direction;
  */
 
 public class ReliableSensorTest extends ReliableSensor {
-	private ReliableRobot robot;
-	private Maze maze;
-	private Control control;
-	private StatePlaying state;
-	private ReliableSensor reliableSensorForward;
-	private ReliableSensor reliableSensorBackward;
-	private ReliableSensor reliableSensorLeft;
-	private ReliableSensor reliableSensorRight;
+	public ReliableRobot robot;
+	public Maze maze;
+	public Control control;
+	public StatePlaying state;
+	public ReliableSensor sensorForward;
+	public ReliableSensor sensorBackward;
+	public ReliableSensor sensorLeft;
+	public ReliableSensor sensorRight;
 
 	@BeforeEach
-	public final void setUp() {
+	public void setUp() {
 		robot = new ReliableRobot();
 		Wizard wizard = new Wizard();
 		
@@ -57,28 +57,28 @@ public class ReliableSensorTest extends ReliableSensor {
 		control.setState(state);
 
 		// Set up forward Sensor
-		reliableSensorForward = new ReliableSensor();
-		reliableSensorForward.setSensorDirection(Direction.FORWARD);
-		robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
-		reliableSensorForward.setMaze(maze);
+		sensorForward = new ReliableSensor();
+		sensorForward.setSensorDirection(Direction.FORWARD);
+		robot.addDistanceSensor(sensorForward, Direction.FORWARD);
+		sensorForward.setMaze(maze);
 
 		// Set up Left Sensor
-		reliableSensorLeft = new ReliableSensor();
-		reliableSensorLeft.setSensorDirection(Direction.LEFT);
-		robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
-		reliableSensorLeft.setMaze(maze);
+		sensorLeft = new ReliableSensor();
+		sensorLeft.setSensorDirection(Direction.LEFT);
+		robot.addDistanceSensor(sensorLeft, Direction.LEFT);
+		sensorLeft.setMaze(maze);
 
 		// Set up Right Sensor
-		reliableSensorRight = new ReliableSensor();
-		reliableSensorRight.setSensorDirection(Direction.RIGHT);
-		robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
-		reliableSensorRight.setMaze(maze);
+		sensorRight = new ReliableSensor();
+		sensorRight.setSensorDirection(Direction.RIGHT);
+		robot.addDistanceSensor(sensorRight, Direction.RIGHT);
+		sensorRight.setMaze(maze);
 
 		// Set up Backward Sensor
-		reliableSensorBackward = new ReliableSensor();
-		reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
-		robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
-		reliableSensorBackward.setMaze(maze);
+		sensorBackward = new ReliableSensor();
+		sensorBackward.setSensorDirection(Direction.BACKWARD);
+		robot.addDistanceSensor(sensorBackward, Direction.BACKWARD);
+		sensorBackward.setMaze(maze);
 
 		robot.setController(control);
 	}
@@ -91,7 +91,7 @@ public class ReliableSensorTest extends ReliableSensor {
 		boolean isOut = false;
 		float[] power = { -1 };
 		try {
-			robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
+			robot.sensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
 					power);
 		} catch (Exception e) {
 			isOut = true;
@@ -107,7 +107,7 @@ public class ReliableSensorTest extends ReliableSensor {
 		boolean isOut = false;
 		float[] power = null;
 		try {
-			robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
+			robot.sensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
 					power);
 		} catch (Exception e) {
 			isOut = true;
@@ -119,12 +119,12 @@ public class ReliableSensorTest extends ReliableSensor {
 	 * Test if the distanceToObstacle method doen't work when the sensor is not operational
 	 */
 	@Test
-	final void TestDistanceToObstacleNoOperational() {
+	void TestDistanceToObstacleNoOperational() {
 		boolean isOper = true;
 		float[] power = { 0 };
-		reliableSensorForward.isOperational = false;
+		sensorForward.isOperational = false;
 		try {
-			robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
+			robot.sensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
 					power);
 		} catch (Exception e) {
 			isOper = false;
@@ -135,13 +135,13 @@ public class ReliableSensorTest extends ReliableSensor {
 	/**
 	 * Test if the distanceToObstacle method doen't work when it doesn't have enough power for sensing
 	 */
-	@Test
-	final void TestDistanceToObstacleNotEnoughPower() {
+	@Test 
+	void TestDistanceToObstacleNotEnoughPower() {
 		boolean isLow = false;
 		float[] power = { 0 };
-		reliableSensorForward.isOperational = false;
+		sensorForward.isOperational = false;
 		try {
-			robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
+			robot.sensorForward.distanceToObstacle(control.getCurrentPosition(), control.getCurrentDirection(),
 					power);
 		} catch (Exception e) {
 			isLow = true;
@@ -157,7 +157,7 @@ public class ReliableSensorTest extends ReliableSensor {
 	final void TestDistanceToObstacle() {
 		float[] power = { 100 };
 		try {
-			assertEquals(true, robot.reliableSensorForward.distanceToObstacle(control.getCurrentPosition(),
+			assertEquals(true, robot.sensorForward.distanceToObstacle(control.getCurrentPosition(),
 					control.getCurrentDirection(), power) < Integer.MAX_VALUE);
 		} catch (Exception e) {
 
@@ -172,7 +172,7 @@ public class ReliableSensorTest extends ReliableSensor {
 	final void TestNorth() {
 		float[] power = { 100 };
 		try {
-			assertEquals(robot.reliableSensorLeft.distanceToObstacle(control.getCurrentPosition(),
+			assertEquals(robot.sensorLeft.distanceToObstacle(control.getCurrentPosition(),
 					control.getCurrentDirection(), power) < Integer.MAX_VALUE, true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +188,7 @@ public class ReliableSensorTest extends ReliableSensor {
 	final void TestWest() {
 		float[] power = { 100 };
 		try {
-			assertEquals(robot.reliableSensorBackward.distanceToObstacle(control.getCurrentPosition(),
+			assertEquals(robot.sensorBackward.distanceToObstacle(control.getCurrentPosition(),
 					control.getCurrentDirection(), power) < Integer.MAX_VALUE, true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,16 +201,15 @@ public class ReliableSensorTest extends ReliableSensor {
 	 * the robot
 	 */
 	@Test
-	final void TestSouth() {
+	void TestSouth() {
 		float[] power = { 100 };
 		state.cd = CardinalDirection.South;
 		try {
-			assertEquals(robot.reliableSensorRight.distanceToObstacle(control.getCurrentPosition(),
+			assertEquals(robot.sensorRight.distanceToObstacle(control.getCurrentPosition(),
 					control.getCurrentDirection(), power) < Integer.MAX_VALUE, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -221,7 +220,7 @@ public class ReliableSensorTest extends ReliableSensor {
 		Maze maze = null;
 		boolean isNull = false;
 		try {
-			robot.reliableSensorForward.setMaze(maze);
+			robot.sensorForward.setMaze(maze);
 		} catch (Exception e) {
 			isNull = true;
 		}
@@ -238,7 +237,7 @@ public class ReliableSensorTest extends ReliableSensor {
 		Direction direction = null;
 		boolean isNull = false;
 		try {
-			robot.reliableSensorForward.setSensorDirection(direction);
+			robot.sensorForward.setSensorDirection(direction);
 		} catch (Exception e) {
 			isNull = true;
 		}

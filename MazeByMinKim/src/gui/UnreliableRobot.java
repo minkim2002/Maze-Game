@@ -18,13 +18,13 @@ import gui.Robot.Direction;
 public class UnreliableRobot extends ReliableRobot{
 	public UnreliableRobot(int fw, int le, int ri, int bw) {
 		super();
-		reliableSensorForward = (fw == 0 ? new UnreliableSensor(Direction.FORWARD)
+		sensorForward = (fw == 0 ? new UnreliableSensor(Direction.FORWARD)
 				: new ReliableSensor(Direction.FORWARD));
-		reliableSensorLeft = (le == 0 ? new UnreliableSensor(Direction.LEFT)
+		sensorLeft = (le == 0 ? new UnreliableSensor(Direction.LEFT)
 				: new ReliableSensor(Direction.LEFT));
-		reliableSensorRight = (ri == 0 ? new UnreliableSensor(Direction.RIGHT)
+		sensorRight = (ri == 0 ? new UnreliableSensor(Direction.RIGHT)
 				: new ReliableSensor(Direction.RIGHT));
-		reliableSensorBackward = (bw == 0 ? new UnreliableSensor(Direction.BACKWARD)
+		sensorBackward = (bw == 0 ? new UnreliableSensor(Direction.BACKWARD)
 				: new ReliableSensor(Direction.BACKWARD));
 	}
 	
@@ -44,16 +44,16 @@ public class UnreliableRobot extends ReliableRobot{
 		try {
 			switch (direction) {
 				case FORWARD:
-					reliableSensorForward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
+					sensorForward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
 					break;
 				case LEFT:
-					reliableSensorLeft.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
+					sensorLeft.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
 					break;
 				case RIGHT:
-					reliableSensorRight.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
+					sensorRight.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
 					break;
 				case BACKWARD:
-					reliableSensorBackward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
+					sensorBackward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
 					break;
 			}
 		} catch (UnsupportedOperationException e) {
@@ -80,16 +80,16 @@ public class UnreliableRobot extends ReliableRobot{
 		try {
 			switch (direction) {
 				case FORWARD:
-					reliableSensorForward.stopFailureAndRepairProcess();
+					sensorForward.stopFailureAndRepairProcess();
 					break;
 				case LEFT:
-					reliableSensorLeft.stopFailureAndRepairProcess();
+					sensorLeft.stopFailureAndRepairProcess();
 					break;
 				case RIGHT:
-					reliableSensorRight.stopFailureAndRepairProcess();
+					sensorRight.stopFailureAndRepairProcess();
 					break;
 				case BACKWARD:
-					reliableSensorBackward.stopFailureAndRepairProcess();
+					sensorBackward.stopFailureAndRepairProcess();
 					break;
 			}
 		} catch (UnsupportedOperationException e) {
