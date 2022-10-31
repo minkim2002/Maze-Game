@@ -310,15 +310,23 @@ public class Control extends JFrame implements KeyListener {
 			    case "-g":
 			    	String algorithm = args[i++];
 			    	File f = new File(algorithm);
+			    	
+			    	//Prim Algorithm
 			    	if("Prim".equalsIgnoreCase(algorithm)) {
 			    		msg = "Command line input detected: generating random maze with Prim's algorithm. \n";
 				        ((StateTitle)currentState).setBuilder(Order.Builder.Prim);
-			    	} else if("Boruvka".equalsIgnoreCase(algorithm)) {
+			    	} 
+			    	//Boruvka Algorithm
+			    	else if("Boruvka".equalsIgnoreCase(algorithm)) {
 			    		msg = "Command line input detected: generating random maze with Boruvka's algorithm. \n";
 				        ((StateTitle)currentState).setBuilder(Order.Builder.Boruvka);
-			    	} else if("DFS".equalsIgnoreCase(algorithm)) {
+			    	} 
+			    	//DFS
+			    	else if("DFS".equalsIgnoreCase(algorithm)) {
 			    		msg = "Command line input detected: generating DFS. \n";
-			    	} else if(f.exists() && f.canRead()) {
+			    	} 
+			    	//Read File, if no file, DFS
+			    	else if(f.exists() && f.canRead()) {
 			    		msg = "Detected file descriptor on command line, loading maze from this file: " + parameter + "\n";
 			            ((StateTitle)currentState).setFileName(parameter);
 			    	} else {
@@ -327,21 +335,21 @@ public class Control extends JFrame implements KeyListener {
 			    	break;
 			    case "-d":
 			    	String robotdriver = args[i++];
-	    			// Case 1: Wizard
+	    			// Wizard Algorithm
 	    			if ("Wizard".equalsIgnoreCase(robotdriver)) {
 	    				msg += "Using Wizard to solve the maze.\n";
 	    				driver = new Wizard();
 	    			}
-	    			// Case 2: WallFollower
+	    			// WallFollower Algorithm
 	    			else if ("WallFollower".equalsIgnoreCase(robotdriver)) {
 	    				msg += "Using WallFollower to solve the maze.\n";
 	    				driver = new WallFollower();
 	    			}
-	    			// Case 3: Manual
+	    			// Manual
 	    			else if ("Manual".equalsIgnoreCase(robotdriver)) {
 	    				msg += "Using Manual to solve the maze.\n";
 	    			}
-	    			// Case 4: no input
+	    			// No input, Switch to manual
 	    			else {
 	    				msg += "No driver selected, switching to manual\n";
 	    			}
@@ -359,26 +367,27 @@ public class Control extends JFrame implements KeyListener {
 	    				}
 	    				operationalSensors[j] = check; 
 	    			}
-			    	// Case 1: ReliableRobot
+			    	// ReliableRobot
 	    			if (reliable) {
-	    				msg += "Using a ReliableRobot with all reliable sensors.\n";
+	    				msg += "Getting a ReliableRobot with all reliable sensors.\n";
 	    				robot = new ReliableRobot();
 	    			}
-	    			// Case 2: UnreliableRobot
+	    			// UnreliableRobot
 	    			else if (unreliableSensors > 0) {
-	    				msg += "Using an UnreliableRobot with " + unreliableSensors + " unreliable sensor(s).\n";
+	    				msg += "Getting an UnreliableRobot with " + unreliableSensors + " unreliable sensor(s).\n";
 	    				robot = new UnreliableRobot(operationalSensors[0], operationalSensors[1], 
 	    	    				operationalSensors[2], operationalSensors[3]);
 	    			}
-	    			// Case 3: no input
+	    			// no input, ReliableRobot
 	    			else {
-	    				msg += "No robot specified, using a ReliableRobot by default.\n";
+	    				msg += "No robot specified, getting a ReliableRobot by default.\n";
 	    				robot = new ReliableRobot();
 	    			}
 	    			break;
 		    		
 		    }
 	    }
+	    //Configure the driver and the robot with the inputted values.
 	    if (driver != null) {
 	    	if (robot != null) driver.setRobot(robot);
 	    	else {
