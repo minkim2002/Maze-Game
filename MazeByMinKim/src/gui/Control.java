@@ -345,6 +345,11 @@ public class Control extends JFrame implements KeyListener {
 	    				msg += "Using WallFollower to solve the maze.\n";
 	    				driver = new WallFollower();
 	    			}
+	    			// SmartWizard Algorithm
+	    			else if ("SmartWizard".equalsIgnoreCase(robotdriver)) {
+	    				msg += "Using SmartWizard to solve the maze.\n";
+	    				driver = new SmartWizard();
+	    			}
 	    			// SmarterWallFollower Algorithm
 	    			else if ("SmarterWallFollower".equalsIgnoreCase(robotdriver)) {
 	    				msg += "Using SmarterWallFollower to solve the maze.\n";
