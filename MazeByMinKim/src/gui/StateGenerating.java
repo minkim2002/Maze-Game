@@ -257,8 +257,9 @@ public class StateGenerating extends DefaultOrder implements State {
         	control.driver.setMaze(maze);
         	for(Direction direction: Direction.values()) {
         		try {
-        			System.out.println("Hi");
+        			//start the repair cycle
 					control.robot.startFailureAndRepairProcess(direction, 4000, 2000);
+					//If there are multiple sensors to be repaired, wait 1.3 sec
 					Thread.sleep(1300);
 				} catch (Exception e) {
 					System.out.println("Reliable Sensor");

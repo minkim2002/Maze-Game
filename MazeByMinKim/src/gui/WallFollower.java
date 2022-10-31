@@ -97,7 +97,7 @@ public class WallFollower extends Wizard {
 	 * @param direction of the sensor to check
 	 * @return whether the sensor is operational
 	 */
-	protected boolean isOperational(Direction direction) {
+	public boolean isOperational(Direction direction) {
 		try {
 			//Update the current robot's situation
 			int dist = robot.distanceToObstacle(direction);
@@ -117,7 +117,7 @@ public class WallFollower extends Wizard {
 	/**
 	 * Waits for a sensor to be operational again before future steps.
 	 */
-	protected void waitTilOperational(boolean[] sensors) {
+	public void waitTilOperational(boolean[] sensors) {
 		while(!sensors[0] && !sensors[1] && !sensors[2] && !sensors[3]) {
 			try {
 				Thread.sleep(2000);
@@ -136,7 +136,7 @@ public class WallFollower extends Wizard {
 	 * @param right status of the right sensor
 	 * @param backward status of the backward sensor
 	 */
-	protected void setState(boolean forward, boolean left, boolean right, boolean backward) {
+	public void setState(boolean forward, boolean left, boolean right, boolean backward) {
 		sensorState = (forward && left && right && backward) ? new OperationalState(robot)
 				: new RepairState(forward, left, right, backward, robot);
 	}

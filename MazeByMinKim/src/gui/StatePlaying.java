@@ -80,6 +80,8 @@ public class StatePlaying implements State {
 	Maze maze;
 
 	Robot robot;
+	
+	int walkStep;
 
 	private boolean showMaze; // toggle switch to show overall maze on screen
 	private boolean showSolution; // toggle switch to show solution in overall maze on screen
@@ -211,7 +213,7 @@ public class StatePlaying implements State {
 			control.driver.setRobot(control.robot);
 		}
 		
-		if (control.getDriver() != null)
+		if (control.getDriver() != null) {
 			try {
 				boolean isWorking = control.driver.drive2Exit();
 				assert(isWorking==true);
@@ -219,6 +221,7 @@ public class StatePlaying implements State {
 				e.printStackTrace();
 				switchFromPlayingToWinning(0);
 			}
+		}
 	}
 
 	/**
@@ -255,21 +258,24 @@ public class StatePlaying implements State {
 	public void switchFromPlayingToWinning(int pathLength) {
 		// need to instantiate and configure the winning state
 		StateWinning currentState = new StateWinning();
+		control.setState(currentState);
 
-		// The playing state needs
-		// 1) the path length
-		//
 		if (control.getDriver() != null && control.getRobot() != null) {
+			//Stop the repair cycle
+			control.getRobot().stopFailureAndRepairProcess(Direction.FORWARD);
+			control.getRobot().stopFailureAndRepairProcess(Direction.LEFT);
+			control.getRobot().stopFailureAndRepairProcess(Direction.RIGHT);
+			control.getRobot().stopFailureAndRepairProcess(Direction.BACKWARD);
 			currentState.setPathLength(control.getDriver().getPathLength());
 		} else {
 			currentState.setPathLength(pathLength);
 		}
 		
-			LOGGER.fine("Control switches from playing to winning screen, game completed.");
+		LOGGER.fine("Control switches from playing to winning screen, game completed.");
 
-			// update the context class with the new state
-			// and hand over control to the new state
-			currentState.start(control, panel);
+		// update the context class with the new state
+		// and hand over control to the new state
+		currentState.start(control, panel);
 		
 	}
 
@@ -522,7 +528,7 @@ public class StatePlaying implements State {
 		// check if there is a wall in the way
 		if (!wayIsClear(dir))
 			return;
-		int walkStep = 0;
+		walkStep = 0;
 		// walkStep is a parameter of FirstPersonView.draw()
 		// it is used there for scaling steps
 		// so walkStep is implicitly used in slowedDownRedraw

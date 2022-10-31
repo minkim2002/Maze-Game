@@ -136,8 +136,9 @@ public class SimpleScreens {
 				centerString(gc, "Energy consumption: " + energyConsumption, 230);
 			}
 			updateFontAndColor(gc, smallBannerFont, MazeColors.TITLE_LARGE);
-			centerString(gc, "Path length: " + pathLength, 210);
-			
+			if(pathLength!=0) {
+				centerString(gc, "Path length: " + pathLength, 210);
+			}
 		} else {
 			// write the title 
 			updateFontAndColor(gc, largeBannerFont, MazeColors.TITLE_LARGE);

@@ -22,15 +22,15 @@ import gui.Robot.Turn;
  */
 
 class WizardTest {
-	private ReliableRobot robot;
-	private Maze maze;
-	private Control control;
-	private StatePlaying state;
-	private ReliableSensor reliableSensorForward;
-	private ReliableSensor reliableSensorBackward;
-	private ReliableSensor reliableSensorLeft;
-	private ReliableSensor reliableSensorRight;
-	private Wizard wizard;
+	public ReliableRobot robot;
+	public Maze maze;
+	public Control control;
+	public StatePlaying state;
+	public ReliableSensor sensorForward;
+	public ReliableSensor sensorBackward;
+	public ReliableSensor sensorLeft;
+	public ReliableSensor sensorRight;
+	public Wizard driver;
 	
 	/**
 	 * Set up the maze and create a new reliable sensor to simulate a robot
@@ -40,12 +40,12 @@ class WizardTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		robot = new ReliableRobot();
-		wizard = new Wizard();
+		driver = new Wizard();
 		
 		//Get a reference of Control
 		control = new Control();
 		control.deterministic = true;
-		control.setRobotAndDriver(robot, wizard);
+		control.setRobotAndDriver(robot, driver);
 		
 		state = new StatePlaying();
 		
@@ -62,32 +62,32 @@ class WizardTest {
 		control.setState(state);
 		
 		//Set up Forward Sensor
-		reliableSensorForward = new ReliableSensor();
-    	reliableSensorForward.setSensorDirection(Direction.FORWARD);
-    	robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
-    	reliableSensorForward.setMaze(maze);
+		sensorForward = new ReliableSensor();
+		sensorForward.setSensorDirection(Direction.FORWARD);
+    	robot.addDistanceSensor(sensorForward, Direction.FORWARD);
+    	sensorForward.setMaze(maze);
     	
     	//Set up Left Sensor
-    	reliableSensorLeft = new ReliableSensor();
-    	reliableSensorLeft.setSensorDirection(Direction.LEFT);
-    	robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
-    	reliableSensorLeft.setMaze(maze);
+    	sensorLeft = new ReliableSensor();
+    	sensorLeft.setSensorDirection(Direction.LEFT);
+    	robot.addDistanceSensor(sensorLeft, Direction.LEFT);
+    	sensorLeft.setMaze(maze);
     	
     	//Set up Right Sensor
-    	reliableSensorRight = new ReliableSensor();
-    	reliableSensorRight.setSensorDirection(Direction.RIGHT);
-    	robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
-    	reliableSensorRight.setMaze(maze);
+    	sensorRight = new ReliableSensor();
+    	sensorRight.setSensorDirection(Direction.RIGHT);
+    	robot.addDistanceSensor(sensorRight, Direction.RIGHT);
+    	sensorRight.setMaze(maze);
     	
     	//Set up Backward Sensor
-    	reliableSensorBackward = new ReliableSensor();
-    	reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
-    	robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
-    	reliableSensorBackward.setMaze(maze);	
+    	sensorBackward = new ReliableSensor();
+    	sensorBackward.setSensorDirection(Direction.BACKWARD);
+    	robot.addDistanceSensor(sensorBackward, Direction.BACKWARD);
+    	sensorBackward.setMaze(maze);	
     	
     	robot.setController(control);
-    	wizard.setMaze(maze);
-    	wizard.setRobot(robot);
+    	driver.setMaze(maze);
+    	driver.setRobot(robot);
 	}
 	
 	/**
@@ -103,24 +103,24 @@ class WizardTest {
 	 */
 	@Test
 	final void checkDrive() {
-		int[] exitPosition = wizard.referenceMaze.getExitPosition();
+		int[] exitPosition = driver.referenceMaze.getExitPosition();
 		CardinalDirection cd;
 		
-		if(exitPosition[1] == 0 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.North)){
+		if(exitPosition[1] == 0 && !driver.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.North)){
 			cd = CardinalDirection.North;
-		} else if(exitPosition[0] == 0 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.West)) {
+		} else if(exitPosition[0] == 0 && !driver.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.West)) {
 			cd = CardinalDirection.West;
-		} else if(exitPosition[1] == maze.getHeight()-1 && !wizard.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.South)) {
+		} else if(exitPosition[1] == maze.getHeight()-1 && !driver.referenceMaze.hasWall(exitPosition[0], exitPosition[1], CardinalDirection.South)) {
 			cd = CardinalDirection.South;
 		} else {
 			cd = CardinalDirection.East;
 		}
 		try {
-			boolean isWorking = wizard.drive2Exit();
+			boolean isWorking = driver.drive2Exit();
 			assertTrue(isWorking);
-			int[] currentPosition = wizard.robot.getCurrentPosition();
+			int[] currentPosition = driver.robot.getCurrentPosition();
 			assertEquals(currentPosition, exitPosition);
-			assertEquals(wizard.robot.getCurrentDirection(), cd);
+			assertEquals(driver.robot.getCurrentDirection(), cd);
 		} catch (Exception e) {
 			
 		}
@@ -133,7 +133,7 @@ class WizardTest {
 	@Test
 	final void testDrive2Exit() {
 		try {
-			assertEquals(wizard.drive2Exit(), true);
+			assertEquals(driver.drive2Exit(), true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,7 +147,7 @@ class WizardTest {
 	@Test
 	final void testDrive1Step2Exit(){
 		try {
-			assertEquals(wizard.drive1Step2Exit(), true);
+			assertEquals(driver.drive1Step2Exit(), true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,24 +164,24 @@ class WizardTest {
 	public final void testNeighborOutsideMaze() {
 		// at the starting position, only the western neighbor should be outside of the maze
 		int[] currentPosition = {0, 1};
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
-		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertTrue(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
 		
 		// at a position in the middle of the maze, all neighbors should be inside of the maze
 		currentPosition[0] = 1; currentPosition[1] = 2;
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
 		
 		// at the corner position, there should be exactly two neighbors outside of the maze
 		currentPosition[0] = 3; currentPosition[1] = 0;
-		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
-		assertTrue(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
-		assertFalse(wizard.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
+		assertTrue(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.North));
+		assertTrue(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.East));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.South));
+		assertFalse(driver.isNeighborOutsideMaze(currentPosition, CardinalDirection.West));
 	}
 	
 	
@@ -191,7 +191,7 @@ class WizardTest {
 	@Test
 	final void testGetEnergyConsumption() {
 		control.robot.move(1);
-		assertEquals(6, wizard.getEnergyConsumption());
+		assertEquals(6, driver.getEnergyConsumption());
 	}
 	
 	/**
@@ -199,7 +199,7 @@ class WizardTest {
 	 */
 	@Test
 	final void testGetPathLength() {
-		assertEquals(control.robot.getOdometerReading(), wizard.getPathLength());
+		assertEquals(control.robot.getOdometerReading(), driver.getPathLength());
 	}
 
 }
