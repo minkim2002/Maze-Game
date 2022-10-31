@@ -12,12 +12,12 @@ package gui;
 public class RepairCycle implements Runnable {
 	protected int operatingTime;
 	protected int repairTime;
-	protected UnreliableSensor sensor;
+	protected UnreliableSensor unreliableSensor;
 
 	public RepairCycle(int operationgTime, int repairTime, UnreliableSensor sensor) {
 		this.operatingTime = operationgTime;
 		this.repairTime = repairTime;
-		this.sensor = sensor;
+		unreliableSensor = sensor;
 	}
 	
 	/**
@@ -30,12 +30,12 @@ public class RepairCycle implements Runnable {
 				// wait for the sensor to fail 
 				Thread.sleep(operatingTime);
 				// sensor failed
-				sensor.isOperational = false;
+				unreliableSensor.isOperational = false;
 				
 				// wait for the sensor to be fixed
 				Thread.sleep(repairTime);
 				// sensor is working again
-				sensor.isOperational = true;
+				unreliableSensor.isOperational = true;
 			}
 		} catch (InterruptedException e) {
 			System.out.println("process interrupted");

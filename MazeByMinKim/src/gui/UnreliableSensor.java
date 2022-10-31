@@ -3,6 +3,9 @@ package gui;
 import gui.Robot.Direction;
 
 /**
+ * 
+ * @author Min Kim
+ * 
  * This class has the responsibility to get the robot's current
  * position and figure out how far the robot is to a wall from
  * the current position and the direction; however, it is subject
@@ -12,9 +15,6 @@ import gui.Robot.Direction;
  * This class inherits ReliableRobot and collaborates with floor plan of Maze to
  * measure distances towards obstacles, RepairProcess, RobotDriver(either WallFollower or Wizard),
  * and Robot.
- * 
- * @author Min Kim
- *
  */
 
 public class UnreliableSensor extends ReliableSensor {

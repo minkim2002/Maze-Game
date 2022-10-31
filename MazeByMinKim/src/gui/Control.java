@@ -285,6 +285,9 @@ public class Control extends JFrame implements KeyListener {
 
 	private void handleCommandLineInput(String[] args) {
 		
+		RobotDriver driver = null;
+		Robot robot = null;
+		
 	    if (args.length == 0) {
 	    	// no command line input
 	    	LOGGER.fine("No command line input: maze will be generated with a randomized algorithm.");
@@ -299,45 +302,91 @@ public class Control extends JFrame implements KeyListener {
 	    // command line input only applies to the first round of the game
 	    // so we can directly apply it to the currentState 
 		
-	    String parameter = args[0];
-	    String msg = "Error in handling command line input: " + parameter; // message for feedback
-	    switch (parameter) {
-	    case "Prim" :
-	    	msg = "Command line input detected: generating random maze with Prim's algorithm.";
-	        ((StateTitle)currentState).setBuilder(Order.Builder.Prim);
-	    	break;
-	    case "Kruskal":
-	    case "Eller":
-	    case "Boruvka":
-	    	msg = "Command line input detected: generating random maze with Boruvka's algorithm.";
-	        ((StateTitle)currentState).setBuilder(Order.Builder.Boruvka);
-	    	break;
-	    	// TODO: for P2 assignment, please add code to set the builder accordingly
-	    	//throw new RuntimeException("Don't know anybody named " + parameter);
-	    case "Wizard":
-	    	((StateTitle)currentState).setBuilder(Order.Builder.DFS);
-	    	
-	    	msg = "Command line input detected: playing the game with wizard";
-	    	Robot reliableRobot = new ReliableRobot();
-	    	RobotDriver wizard = new Wizard();
-	    	setRobotAndDriver(reliableRobot, wizard);
-	    	
-	    	break;
-	    default: // assume this is a filename
-	    	File f = new File(parameter) ;
-	        if (f.exists() && f.canRead())
-	        {
-	            msg = "Detected file descriptor on command line, loading maze from this file: " + parameter;
-	            ((StateTitle)currentState).setFileName(parameter);
-	        }
-	        else {
-	            // None of the predefined strings and not a filename either: 
-	            msg = "Unknown command line parameter: " + parameter + " ignored, operating in default mode.";
-	        }
-	    	break;
+	    int i = 0;
+	    while(i < args.length) {
+	    	String parameter = args[i++];
+	    	String msg = "Error in handling command line input: " + parameter; // message for feedback
+		    switch (parameter) {
+			    case "-g":
+			    	String algorithm = args[i++];
+			    	File f = new File(algorithm);
+			    	if("Prim".equalsIgnoreCase(algorithm)) {
+			    		msg = "Command line input detected: generating random maze with Prim's algorithm. \n";
+				        ((StateTitle)currentState).setBuilder(Order.Builder.Prim);
+			    	} else if("Boruvka".equalsIgnoreCase(algorithm)) {
+			    		msg = "Command line input detected: generating random maze with Boruvka's algorithm. \n";
+				        ((StateTitle)currentState).setBuilder(Order.Builder.Boruvka);
+			    	} else if("DFS".equalsIgnoreCase(algorithm)) {
+			    		msg = "Command line input detected: generating DFS. \n";
+			    	} else if(f.exists() && f.canRead()) {
+			    		msg = "Detected file descriptor on command line, loading maze from this file: " + parameter + "\n";
+			            ((StateTitle)currentState).setFileName(parameter);
+			    	} else {
+			    		msg = "Unknown command line parameter: " + parameter + " ignored, operating in default mode. \n";
+			    	}
+			    	break;
+			    case "-d":
+			    	String robotdriver = args[i++];
+	    			// Case 1: Wizard
+	    			if ("Wizard".equalsIgnoreCase(robotdriver)) {
+	    				msg += "Using Wizard to solve the maze.\n";
+	    				driver = new Wizard();
+	    			}
+	    			// Case 2: WallFollower
+	    			else if ("WallFollower".equalsIgnoreCase(robotdriver)) {
+	    				msg += "Using WallFollower to solve the maze.\n";
+	    				driver = new WallFollower();
+	    			}
+	    			// Case 3: Manual
+	    			else if ("Manual".equalsIgnoreCase(robotdriver)) {
+	    				msg += "Using Manual to solve the maze.\n";
+	    			}
+	    			// Case 4: no input
+	    			else {
+	    				msg += "No driver selected, switching to manual\n";
+	    			}
+	    			break;
+			    case "-r":
+			    	String sensors = args[i++];
+			    	int[] operationalSensors = new int[4];
+			    	boolean reliable = true;
+			    	int unreliableSensors = 0;
+			    	for (int j = 0; j < sensors.length(); j++) {
+	    				int check = Integer.parseInt(sensors.substring(j, j+1));
+	    				if (check == 0) {
+	    					reliable = false;
+	    					unreliableSensors++;
+	    				}
+	    				operationalSensors[j] = check; 
+	    			}
+			    	// Case 1: ReliableRobot
+	    			if (reliable) {
+	    				msg += "Using a ReliableRobot with all reliable sensors.\n";
+	    				robot = new ReliableRobot();
+	    			}
+	    			// Case 2: UnreliableRobot
+	    			else if (unreliableSensors > 0) {
+	    				msg += "Using an UnreliableRobot with " + unreliableSensors + " unreliable sensor(s).\n";
+	    				robot = new UnreliableRobot(operationalSensors[0], operationalSensors[1], 
+	    	    				operationalSensors[2], operationalSensors[3]);
+	    			}
+	    			// Case 3: no input
+	    			else {
+	    				msg += "No robot specified, using a ReliableRobot by default.\n";
+	    				robot = new ReliableRobot();
+	    			}
+	    			break;
+		    		
+		    }
 	    }
-	    
-	    LOGGER.fine(msg);
+	    if (driver != null) {
+	    	if (robot != null) driver.setRobot(robot);
+	    	else {
+	    		robot = new ReliableRobot();
+	    		driver.setRobot(robot);
+	    	}
+	    	setRobotAndDriver(robot, driver);
+	    }
 	}
 	/**
      * Method incorporates all reactions to keyboard input in original code. 

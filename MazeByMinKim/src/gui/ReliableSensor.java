@@ -10,14 +10,14 @@ import generation.Maze;
 import gui.Robot.Direction;
 
 /**
+ * @author Min Kim
+ * 
  * This class has the responsibility to get the robot's current
  * position and figure out how far the robot is to a wall from
  * the current position and the direction.
  * 
  * This class implements DistanceSensor and uses Floorplan to
  * measure distances towards obstacles.
- * 
- * @author Min Kim
  *
  */
 public class ReliableSensor implements DistanceSensor {
