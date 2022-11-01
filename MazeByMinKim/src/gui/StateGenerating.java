@@ -250,8 +250,8 @@ public class StateGenerating extends DefaultOrder implements State {
     	// need to instantiate and configure the playing state
         StatePlaying currentState = new StatePlaying();
         control.setState(currentState);
-        
         currentState.setMaze(maze);
+        
         if(control.robot!=null && control.driver!=null) {
         	control.robot.setController(control);
         	control.driver.setMaze(maze);

@@ -42,6 +42,10 @@ public class ReliableRobot implements Robot {
 		distanceTraveled = 0;
 		setBatteryLevel(INITIAL_BATTERY);
 		isStopped = false;
+		addDistanceSensor(new ReliableSensor(), Direction.FORWARD);
+		addDistanceSensor(new ReliableSensor(), Direction.LEFT);
+		addDistanceSensor(new ReliableSensor(), Direction.RIGHT);
+		addDistanceSensor(new ReliableSensor(), Direction.BACKWARD);
 	}
 
 	/**

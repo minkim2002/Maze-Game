@@ -3,6 +3,15 @@ package gui;
 import java.util.ArrayDeque;
 
 import gui.Robot.Direction;
+import gui.Robot.Turn;
+
+/**
+ * SmarterWallFollower class introduces a WallFollower algorithm with a better functionality.
+ * While it inherits most of the components form the WallFollower class, it additionally
+ * handles a situation where the robot is stuck in an inner wall in a room.
+ * 
+ * @author Min Kim
+ */
 
 public class SmarterWallFollower extends WallFollower {
 	
@@ -34,7 +43,9 @@ public class SmarterWallFollower extends WallFollower {
 						//circling around
 						if (positionRecord.peekFirst()[0] == positionRecord.peekLast()[0]
 								&& positionRecord.peekFirst()[1] == positionRecord.peekLast()[1]) {
+							//rotate the robot to the right then
 							//move the robot until it hit the outer room wall.
+							robot.rotate(Turn.RIGHT);
 							while (robot.distanceToObstacle(Direction.FORWARD)!=0) {
 								robot.move(1);
 							}

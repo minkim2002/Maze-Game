@@ -19,6 +19,7 @@ public class WallFollower extends Wizard {
 	//Keep track of all the sensors attached to the robot
 	protected SensorState sensorState;
 	
+	//Indicators for whether a specific sensor is operational or not
 	protected int leftDist;
 	protected int forwardDist;
 	protected boolean isExitVisible;
@@ -75,8 +76,10 @@ public class WallFollower extends Wizard {
 		//Either forward or left sensor is not working
 		if(!forwardStatus || !leftStatus) {
 			boolean[] sensors = {forwardStatus, leftStatus, rightStatus, backwardStatus};
+			// If all the sensors need to be repaired
 			if (!sensors[0] && !sensors[1] && !sensors[2] && !sensors[3])
 				waitTilOperational(sensors);
+			// Reset the sensors
 			setState(sensors[0], sensors[1], sensors[2], sensors[3]);
 		//All sensors are operational
 		} else {
@@ -108,6 +111,7 @@ public class WallFollower extends Wizard {
 				forwardDist = dist;
 			}
 			isExitVisible = (dist == Integer.MAX_VALUE);
+			//Sensor Operational: confirmed
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -120,7 +124,9 @@ public class WallFollower extends Wizard {
 	public void waitTilOperational(boolean[] sensors) {
 		while(!sensors[0] && !sensors[1] && !sensors[2] && !sensors[3]) {
 			try {
+				//Sleep for 2 seconds.
 				Thread.sleep(2000);
+				//Recheck the status.
 				sensors[0] = isOperational(Direction.FORWARD);
 				sensors[1] = isOperational(Direction.LEFT);
 			} catch (Exception e) {

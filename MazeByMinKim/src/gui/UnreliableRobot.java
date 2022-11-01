@@ -18,6 +18,7 @@ import gui.Robot.Direction;
 public class UnreliableRobot extends ReliableRobot{
 	public UnreliableRobot(int fw, int le, int ri, int bw) {
 		super();
+		//If the value is 0, unreliable, if the value is 1, reliable
 		sensorForward = (fw == 0 ? new UnreliableSensor(Direction.FORWARD)
 				: new ReliableSensor(Direction.FORWARD));
 		sensorLeft = (le == 0 ? new UnreliableSensor(Direction.LEFT)
@@ -26,6 +27,7 @@ public class UnreliableRobot extends ReliableRobot{
 				: new ReliableSensor(Direction.RIGHT));
 		sensorBackward = (bw == 0 ? new UnreliableSensor(Direction.BACKWARD)
 				: new ReliableSensor(Direction.BACKWARD));
+		
 	}
 	
 	

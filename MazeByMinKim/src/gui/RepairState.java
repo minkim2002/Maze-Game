@@ -36,12 +36,15 @@ public class RepairState implements SensorState {
 	 **/
 	@Override
 	public boolean nextMove() {
+		//Get next closest operational sensors for both forward and left
 		Direction workingSensorForForward = GetSpareOperationalSensor(Direction.FORWARD);
 		Direction workingSensorForLeft = GetSpareOperationalSensor(Direction.LEFT);
 		
+		//Switch left sensor with an operating one
 		switchSensor(Direction.LEFT, workingSensorForLeft);
 		
 		if(robot.distanceToObstacle(workingSensorForLeft) != 0){
+			//After checking the distance, switch the sensor back
 			switchSensor(workingSensorForLeft, Direction.LEFT);
 			robot.rotate(Turn.LEFT);
 			robot.move(1);
@@ -50,9 +53,11 @@ public class RepairState implements SensorState {
 			switchSensor(workingSensorForLeft, Direction.LEFT);
 		}
 		
+		//Switch forward sensor with an operating one
 		switchSensor(Direction.FORWARD, workingSensorForForward);
 		
 		if(robot.distanceToObstacle(workingSensorForForward) != 0){
+			//After checking the distance, switch the sensor back
 			switchSensor(workingSensorForForward, Direction.FORWARD);
 			robot.move(1);
 			return true;
@@ -60,6 +65,7 @@ public class RepairState implements SensorState {
 			switchSensor(workingSensorForForward, Direction.FORWARD);
 		}
 		
+		//If above two aren't the case, turn right.
 		robot.rotate(Turn.RIGHT);
 		return false;
 	}
@@ -156,6 +162,7 @@ public class RepairState implements SensorState {
 	 * @param spare the direction of the spare sensor that is going to work as a substitute
 	 */
 	private void switchSensor(Direction current, Direction spare) {
+		//Switch the sensor by simply rotating the robot.
 		switch (current) {
 			case FORWARD:
 				if (spare == Direction.LEFT) {
