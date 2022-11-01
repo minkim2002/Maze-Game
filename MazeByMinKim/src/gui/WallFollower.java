@@ -17,12 +17,18 @@ import gui.Robot.Direction;
 public class WallFollower extends Wizard {
 	
 	//Keep track of all the sensors attached to the robot
-	protected SensorState sensorState;
+	public SensorState sensorState;
 	
 	//Indicators for whether a specific sensor is operational or not
 	protected int leftDist;
 	protected int forwardDist;
 	protected boolean isExitVisible;
+	
+	public boolean forwardStatus;
+	public boolean leftStatus;
+	public boolean rightStatus;
+	public boolean backwardStatus;
+	
 	
 	/**
 	 * Drive the robot towards the exit using the left wall-follower algorithm.
@@ -69,10 +75,10 @@ public class WallFollower extends Wizard {
 		boolean moved = false;
 		
 		//Check whether sensors are in need of repair.
-		boolean forwardStatus = isOperational(Direction.FORWARD);
-		boolean leftStatus = isOperational(Direction.LEFT);
-		boolean rightStatus = isOperational(Direction.RIGHT);
-		boolean backwardStatus = isOperational(Direction.BACKWARD);
+		forwardStatus = isOperational(Direction.FORWARD);
+		leftStatus = isOperational(Direction.LEFT);
+		rightStatus = isOperational(Direction.RIGHT);
+		backwardStatus = isOperational(Direction.BACKWARD);
 		//Either forward or left sensor is not working
 		if(!forwardStatus || !leftStatus) {
 			boolean[] sensors = {forwardStatus, leftStatus, rightStatus, backwardStatus};

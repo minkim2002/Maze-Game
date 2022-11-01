@@ -167,10 +167,16 @@ public class StatePlaying implements State {
 		// keep the reference to the panel for drawing
 		this.panel = panel;
 		//
-		// adjust visibility settings to default values
-		showMaze = true;
-		showSolution = true;
-		mapMode = true;
+		// adjust visibility settings to default value
+		if(control.robot != null) {
+			showMaze = true;
+			showSolution = true;
+			mapMode = true;
+		}else {
+			showMaze = true;
+			showSolution = false;
+			mapMode = false;
+		}
 
 		// adjust internal state of maze model
 		// init data structure for visible walls
