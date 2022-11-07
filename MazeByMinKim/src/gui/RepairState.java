@@ -39,10 +39,8 @@ public class RepairState implements SensorState {
 		//Get next closest operational sensors for both forward and left
 		Direction workingSensorForForward = GetSpareOperationalSensor(Direction.FORWARD);
 		Direction workingSensorForLeft = GetSpareOperationalSensor(Direction.LEFT);
-		
 		//Switch left sensor with an operating one
 		switchSensor(Direction.LEFT, workingSensorForLeft);
-		
 		if(robot.distanceToObstacle(workingSensorForLeft) != 0){
 			//After checking the distance, switch the sensor back
 			switchSensor(workingSensorForLeft, Direction.LEFT);

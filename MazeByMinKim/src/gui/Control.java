@@ -9,11 +9,11 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-
 import generation.*;
 
 import gui.ColorTheme.ColorThemeSelection;
 import gui.Constants.UserInput;
+import gui.Robot.Direction;
 
 /**
  * Class handles the user interaction through the different stages of the game.
@@ -305,7 +305,7 @@ public class Control extends JFrame implements KeyListener {
 	    int i = 0;
 	    while(i < args.length) {
 	    	String parameter = args[i++];
-	    	String msg = "Error in handling command line input: " + parameter; // message for feedback
+	    	String msg = "Configuration as follows: " + parameter; // message for feedback
 		    switch (parameter) {
 			    case "-g":
 			    	String algorithm = args[i++];
@@ -381,6 +381,7 @@ public class Control extends JFrame implements KeyListener {
 	    			if (reliable) {
 	    				msg += "Getting a ReliableRobot with all reliable sensors.\n";
 	    				robot = new ReliableRobot();
+	    				
 	    			}
 	    			// UnreliableRobot
 	    			else if (unreliableSensors > 0) {
@@ -393,13 +394,15 @@ public class Control extends JFrame implements KeyListener {
 	    				msg += "No robot specified, getting a ReliableRobot by default.\n";
 	    				robot = new ReliableRobot();
 	    			}
-	    			break;
-		    		
+	    			break;	
 		    }
+		    System.out.println(msg);
 	    }
 	    //Configure the driver and the robot with the inputted values.
 	    if (driver != null) {
-	    	if (robot != null) driver.setRobot(robot);
+	    	if (robot != null) {
+	    		driver.setRobot(robot);
+	    	}
 	    	else {
 	    		robot = new ReliableRobot();
 	    		driver.setRobot(robot);

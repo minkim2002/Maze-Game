@@ -12,6 +12,13 @@ import generation.DefaultOrder;
 import generation.MazeFactory;
 import gui.Robot.Direction;
 
+/**
+ * A set of test cases of Unreliable Robot.
+ * 
+ * @author Min Kim
+ *
+ */
+
 class UnreliableRobotTest extends ReliableRobotTest{
 
 	

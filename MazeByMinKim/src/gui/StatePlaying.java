@@ -5,6 +5,7 @@ import gui.Robot.Direction;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.sql.Driver;
 import java.util.logging.Logger;
 
 import generation.CardinalDirection;
@@ -191,33 +192,6 @@ public class StatePlaying implements State {
 			// else: dry-run without graphics, most likely for testing purposes
 			printWarning();
 		}
-
-		if (control.robot != null && control.driver != null) {
-			ReliableSensor reliableSensorForward = new ReliableSensor();
-			reliableSensorForward.setSensorDirection(Direction.FORWARD);
-			reliableSensorForward.setMaze(maze);
-
-			ReliableSensor reliableSensorLeft = new ReliableSensor();
-			reliableSensorLeft.setSensorDirection(Direction.LEFT);
-			reliableSensorLeft.setMaze(maze);
-
-			ReliableSensor reliableSensorRight = new ReliableSensor();
-			reliableSensorRight.setSensorDirection(Direction.RIGHT);
-			reliableSensorRight.setMaze(maze);
-
-			ReliableSensor reliableSensorBackward = new ReliableSensor();
-			reliableSensorBackward.setSensorDirection(Direction.BACKWARD);
-			reliableSensorBackward.setMaze(maze);
-
-			control.robot.addDistanceSensor(reliableSensorForward, Direction.FORWARD);
-			control.robot.addDistanceSensor(reliableSensorLeft, Direction.LEFT);
-			control.robot.addDistanceSensor(reliableSensorRight, Direction.RIGHT);
-			control.robot.addDistanceSensor(reliableSensorBackward, Direction.BACKWARD);
-
-			control.robot.setController(control);
-			control.driver.setMaze(maze);
-			control.driver.setRobot(control.robot);
-		}
 		
 		if (control.getDriver() != null) {
 			try {
@@ -267,11 +241,6 @@ public class StatePlaying implements State {
 		control.setState(currentState);
 
 		if (control.getDriver() != null && control.getRobot() != null) {
-			//Stop the repair cycle
-			control.getRobot().stopFailureAndRepairProcess(Direction.FORWARD);
-			control.getRobot().stopFailureAndRepairProcess(Direction.LEFT);
-			control.getRobot().stopFailureAndRepairProcess(Direction.RIGHT);
-			control.getRobot().stopFailureAndRepairProcess(Direction.BACKWARD);
 			currentState.setPathLength(control.getDriver().getPathLength());
 		} else {
 			currentState.setPathLength(pathLength);

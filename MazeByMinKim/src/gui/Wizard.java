@@ -221,3 +221,4 @@ public class Wizard implements RobotDriver {
 	}
 
 }
+

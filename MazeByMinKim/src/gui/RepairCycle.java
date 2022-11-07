@@ -14,10 +14,9 @@ public class RepairCycle implements Runnable {
 	protected int repairTime;
 	protected UnreliableSensor unreliableSensor;
 
-	public RepairCycle(int operationgTime, int repairTime, UnreliableSensor sensor) {
+	public RepairCycle(int operationgTime, int repairTime) {
 		this.operatingTime = operationgTime;
 		this.repairTime = repairTime;
-		unreliableSensor = sensor;
 	}
 	
 	/**
@@ -30,18 +29,22 @@ public class RepairCycle implements Runnable {
 				// wait for the sensor to fail 
 				Thread.sleep(operatingTime);
 				// sensor failed
-				unreliableSensor.isOperational = false;
-				
+				unreliableSensor.setOperational(false);
+				//System.out.println(unreliableSensor.isOperational);
 				// wait for the sensor to be fixed
 				Thread.sleep(repairTime);
 				// sensor is working again
-				unreliableSensor.isOperational = true;
+				unreliableSensor.setOperational(true);
 			}
 		} catch (InterruptedException e) {
 			System.out.println("process interrupted");
 			return; 
 		}
 		
+	}
+	
+	public void setSensor(UnreliableSensor sensor) {
+		unreliableSensor = sensor;
 	}
 
 }

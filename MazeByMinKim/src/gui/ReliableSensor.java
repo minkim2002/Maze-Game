@@ -24,12 +24,12 @@ public class ReliableSensor implements DistanceSensor {
 	
 	
 	protected Maze referenceMaze; 
-	private int width;
-	private int height;
+	protected int width;
+	protected int height;
 	
 	protected Direction referenceDirection;
 	
-	public boolean isOperational; 
+	protected boolean isOperational; 
 	
 	//Map of Cardinal Direction with an integer list as a key
 	private Map<ArrayList<Integer>, CardinalDirection> getDirMap;
@@ -44,7 +44,8 @@ public class ReliableSensor implements DistanceSensor {
 	
 	//Constructor with a direction parameter
 	public ReliableSensor(Direction direction) {
-		this();
+		isOperational = true;
+		mapping();
 		setSensorDirection(direction);
 	}
 	
@@ -61,6 +62,10 @@ public class ReliableSensor implements DistanceSensor {
 	@Override
 	public int distanceToObstacle(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply)
 			 throws Exception{
+		
+		int width = referenceMaze.getWidth();
+		int height = referenceMaze.getHeight();
+		
 		// check if power is less than 0
 		if (powersupply[0] < 0) {
 			throw new IndexOutOfBoundsException();
@@ -70,27 +75,30 @@ public class ReliableSensor implements DistanceSensor {
 			currentPosition[0] < 0 || currentPosition[0] >= width || currentPosition[1] < 0 || currentPosition[1] >= height) {
 			throw new IllegalArgumentException();
 		}
+		
 		// check if the sensor is not operational or the power is not enough for sensing
-		if (!isOperational) {
+		if (!isOperational){
 			throw new Exception("SensorFailure");
 		}
 		if (powersupply[0] < getEnergyConsumptionForSensing()) {
 			throw new Exception("PowerFailure");
 		}
-		// figure out which fixed direction we should move in
-		CardinalDirection currentDir = convertToFixedDir(referenceDirection, currentDirection);
-		
-		// keep track of the distance with a counter
-		int distance = 0;
-		
-		while (!referenceMaze.hasWall(currentPosition[0], currentPosition[1], currentDir)) {
-			distance = sense(currentPosition, currentDir, powersupply, distance);
-			if (distance == Integer.MAX_VALUE) {
-				return distance;
+		else {
+			// figure out which fixed direction we should move in
+			CardinalDirection currentDir = convertToFixedDir(referenceDirection, currentDirection);
+			
+			// keep track of the distance with a counter
+			int distance = 0;
+			
+			while (!referenceMaze.hasWall(currentPosition[0], currentPosition[1], currentDir)) {
+				distance = sense(currentPosition, currentDir, powersupply, distance);
+				if (distance == Integer.MAX_VALUE) {
+					return distance;
+				}
 			}
+			powersupply[0] -= getEnergyConsumptionForSensing();
+			return distance;
 		}
-		powersupply[0] -= getEnergyConsumptionForSensing();
-		return distance;
 	}
 	
 	protected int sense(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply, int distance)
@@ -182,14 +190,12 @@ public class ReliableSensor implements DistanceSensor {
 	@Override
 	public void startFailureAndRepairProcess(int meanTimeBetweenFailures, int meanTimeToRepair)
 			throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public void stopFailureAndRepairProcess() throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 	
 	/**

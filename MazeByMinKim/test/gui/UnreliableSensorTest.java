@@ -11,6 +11,13 @@ import generation.Maze;
 import generation.MazeFactory;
 import gui.Robot.Direction;
 
+/**
+ * A set of test cases of Unreliable Sensor
+ * 
+ * @author Min Kim
+ *
+ */
+
 class UnreliableSensorTest extends ReliableSensorTest{
 	
 	public UnreliableSensor unreliableSensorForward;

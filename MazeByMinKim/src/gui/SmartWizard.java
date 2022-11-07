@@ -37,8 +37,8 @@ public class SmartWizard extends Wizard {
 			int[] currentPosition;
 			// run drive1Step2Exit
 			try {
-				jumpInsteadMove(robot.getCurrentDirection());
-				drive1Step2Exit();
+				if(!jumpInsteadMove(robot.getCurrentDirection()))
+					drive1Step2Exit();
 				// update position
 				currentPosition = robot.getCurrentPosition();
 			} catch (Exception e) {
@@ -61,7 +61,7 @@ public class SmartWizard extends Wizard {
 	 * @param cd the CardinalDirection of the current direction the robot is looking at
 	 * @throws Exception
 	 */
-	private void jumpInsteadMove(CardinalDirection cd) throws Exception {
+	public boolean jumpInsteadMove(CardinalDirection cd) throws Exception {
 		switch (cd) {
 		
 		//When the robot is looking to the North
@@ -76,6 +76,7 @@ public class SmartWizard extends Wizard {
 								.getDistanceToExit(robot.getCurrentPosition()[0], robot.getCurrentPosition()[1]) - 6) {
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it (Left side), and one step beyond is not out of maze
@@ -89,6 +90,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.LEFT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it(Right side), and one step beyond is not out of maze
@@ -102,6 +104,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.RIGHT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right behind of it, and one step beyond is not out of maze
@@ -115,6 +118,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.AROUND);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 
@@ -132,6 +136,7 @@ public class SmartWizard extends Wizard {
 								.getDistanceToExit(robot.getCurrentPosition()[0], robot.getCurrentPosition()[1]) - 6) {
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it (Left side), and one step beyond is not out of maze
@@ -145,6 +150,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.LEFT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it(Right side), and one step beyond is not out of maze
@@ -158,6 +164,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.RIGHT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right behind of it, and one step beyond is not out of maze
@@ -171,6 +178,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.AROUND);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 
@@ -188,6 +196,7 @@ public class SmartWizard extends Wizard {
 								.getDistanceToExit(robot.getCurrentPosition()[0], robot.getCurrentPosition()[1]) - 6) {
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it (Left side), and one step beyond is not out of maze
@@ -201,6 +210,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.LEFT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it(Right side), and one step beyond is not out of maze
@@ -214,6 +224,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.RIGHT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right behind of it, and one step beyond is not out of maze
@@ -227,6 +238,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.AROUND);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 
@@ -244,6 +256,7 @@ public class SmartWizard extends Wizard {
 								.getDistanceToExit(robot.getCurrentPosition()[0], robot.getCurrentPosition()[1]) - 6) {
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it (Left side), and one step beyond is not out of maze
@@ -257,6 +270,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.LEFT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right next to it(Right side), and one step beyond is not out of maze
@@ -270,6 +284,7 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.RIGHT);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 			//When the robot has an obstacle right behind of it, and one step beyond is not out of maze
@@ -283,11 +298,12 @@ public class SmartWizard extends Wizard {
 					robot.rotate(Turn.AROUND);
 					//Jump!
 					robot.jump();
+					return true;
 				}
 			}
 
 			break;
 		}
-
-	}
+		return false;
+	} 
 }

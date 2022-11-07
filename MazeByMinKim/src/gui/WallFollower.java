@@ -41,7 +41,6 @@ public class WallFollower extends Wizard {
 			//keep track of a robot's current position.
 			int[] currentPosition;
 			try {
-				Thread.sleep(500);
 				//One step
 				drive1Step2Exit();
 				//Update the robot's position.
@@ -155,3 +154,4 @@ public class WallFollower extends Wizard {
 	
 	
 }
+

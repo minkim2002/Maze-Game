@@ -11,15 +11,15 @@ import generation.Maze;
 import generation.MazeFactory;
 import gui.Robot.Direction;
 
-
 /**
- * A set of test cases of Wall Follower Algorithm
+ * A set of test cases of Smarter Wall Follower Algorithm
  * 
  * @author Min Kim
  *
  */
 
-class WallFollwerTest {
+class SmarterWallFollowerTest {
+
 	public UnreliableRobot robot;
 	public Maze maze;
 	public Control control;
@@ -29,12 +29,12 @@ class WallFollwerTest {
 	public ReliableSensor sensorLeft;
 	public ReliableSensor sensorRight;
 
-	protected WallFollower driver;
+	protected SmarterWallFollower driver;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		robot = new UnreliableRobot(0, 0, 0, 0);
-		driver = new WallFollower();
+		driver = new SmarterWallFollower();
 
 		// Get a reference of Control
 		control = new Control();
@@ -59,9 +59,9 @@ class WallFollwerTest {
 		driver.setMaze(maze);
 		driver.setRobot(robot);
 	}
-
+	
 	/**
-	 * Test if the entire Wall Follower algorithm is working correctly. Find an exit position by using
+	 * Test if the entire smarter wall follower algorithm is working correctly. Find an exit position by using
 	 * the information from the reference maze. Then, identify which direction is the exit.
 	 * 
 	 * By using the drive2Exit method, the robot will arrive at the exit position, 
@@ -71,6 +71,7 @@ class WallFollwerTest {
 	 * Compare the robot's direction and the actual direction of the exit. 
 	 * It it matches, algorithm works.
 	 * 
+	 * Special Warning: the test takes more than 2 minutes!!
 	 */
 	@Test
 	final void checkDrive() {
@@ -96,7 +97,6 @@ class WallFollwerTest {
 			
 		}
 	}
-			 
 
 	/**
 	 * Test if the drive1Step2Exit method is functioning well, which means it
@@ -168,7 +168,7 @@ class WallFollwerTest {
 	}
 
 	/**
-	 * Test if the WallFollower's waitTilOperational method is working accurately.
+	 * Test if the Smarter WallFollower's waitTilOperational method is working accurately.
 	 * When all sensors are in need of repair, the method should successfully carry
 	 * out what it has to do.
 	 */
@@ -185,7 +185,7 @@ class WallFollwerTest {
 	}
 
 	/**
-	 * Test if the WallFollower's waitTilOperational method is working accurately.
+	 * Test if the Smarter WallFollower's waitTilOperational method is working accurately.
 	 * When all sensors are operational, the method should successfully carry out
 	 * what it has to do.
 	 */
@@ -202,7 +202,7 @@ class WallFollwerTest {
 	}
 
 	/**
-	 * Test if the WallFollower's SetState method is working accurately.
+	 * Test if the Smarter WallFollower's SetState method is working accurately.
 	 * When all sensors are operational, the driver should set the sensor
 	 * state as operational state not the repair state, so that the driver
 	 * can carry out the right steps
@@ -223,7 +223,7 @@ class WallFollwerTest {
 	}
 
 	/**
-	 * Test if the WallFollower's SetState method is working accurately.
+	 * Test if the Smarter WallFollower's SetState method is working accurately.
 	 * When all sensors are in need of repair, the driver should set the sensor
 	 * state as repair state not the repair state, so that the driver
 	 * can carry out the right steps

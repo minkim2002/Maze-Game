@@ -1,6 +1,8 @@
 package gui;
 
 
+import java.nio.file.FileSystemNotFoundException;
+
 import gui.Robot.Direction;
 
 /**
@@ -27,75 +29,5 @@ public class UnreliableRobot extends ReliableRobot{
 				: new ReliableSensor(Direction.RIGHT));
 		sensorBackward = (bw == 0 ? new UnreliableSensor(Direction.BACKWARD)
 				: new ReliableSensor(Direction.BACKWARD));
-		
-	}
-	
-	
-	/**
-	 * Method starts a concurrent, independent failure and repair
-	 * process that makes the sensor fail and repair itself.
-	 * 
-	 * @param direction the direction the sensor is mounted on the robot
-	 * @param meanTimeBetweenFailures is the mean time in seconds, must be greater than zero
-	 * @param meanTimeToRepair is the mean time in seconds, must be greater than zero
-	 * @throws UnsupportedOperationException if method not supported
-	 */
-	@Override
-	public void startFailureAndRepairProcess(Direction direction, int meanTimeBetweenFailures,
-			int meanTimeToRepair) throws UnsupportedOperationException {
-		try {
-			switch (direction) {
-				case FORWARD:
-					sensorForward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
-					break;
-				case LEFT:
-					sensorLeft.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
-					break;
-				case RIGHT:
-					sensorRight.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
-					break;
-				case BACKWARD:
-					sensorBackward.startFailureAndRepairProcess(meanTimeBetweenFailures, meanTimeToRepair);
-					break;
-			}
-		} catch (UnsupportedOperationException e) {
-			throw new UnsupportedOperationException();
-		}
-	}
-	
-	
-	/**
-	 * This method stops a failure and repair process and
-	 * leaves the sensor in an operational state.
-	 * 
-	 * Intended use: If called after starting a process, this method
-	 * will stop the process as soon as the sensor is operational.
-	 * 
-	 * If called with no running failure and repair process, 
-	 * the method will return an UnsupportedOperationException.
-	 * 
-	 * @param direction the direction the sensor is mounted on the robot
-	 * @throws UnsupportedOperationException if method not supported
-	 */
-	@Override
-	public void stopFailureAndRepairProcess(Direction direction) throws UnsupportedOperationException {
-		try {
-			switch (direction) {
-				case FORWARD:
-					sensorForward.stopFailureAndRepairProcess();
-					break;
-				case LEFT:
-					sensorLeft.stopFailureAndRepairProcess();
-					break;
-				case RIGHT:
-					sensorRight.stopFailureAndRepairProcess();
-					break;
-				case BACKWARD:
-					sensorBackward.stopFailureAndRepairProcess();
-					break;
-			}
-		} catch (UnsupportedOperationException e) {
-			throw new UnsupportedOperationException();
-		}
 	}
 }

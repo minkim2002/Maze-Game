@@ -16,7 +16,7 @@ import gui.Robot.Turn;
 public class SmarterWallFollower extends WallFollower {
 	
 	/**
-	 * Drive the robot towards the exit using the left wall-follower algorithm.
+	 * Drive the robot towards the exit using the left smarter wall-follower algorithm.
 	 * If the robot is stuck in the room, circling around the inner wall, the driver can
 	 * identify and get out of the room by moving away from the inner wall.
 	 * @return true if the algorithm successfully drives the robot out of the maze.
@@ -24,20 +24,19 @@ public class SmarterWallFollower extends WallFollower {
 	 */
 	@Override
 	public boolean drive2Exit() throws Exception {
+		ArrayDeque<int[]> positionRecord = new ArrayDeque<>();
+		int[] currentPosition;
 		while (!robot.hasStopped()) {
 			// keep track of a robot's current position.
-			int[] currentPosition;
 			try {
-				Thread.sleep(500);
+				//make the robot position tracker
 				//When the robot is in the room
-				while (robot.isInsideRoom()) {
-					//make the robot position tracker
-					ArrayDeque<int[]> positionRecord = new ArrayDeque<>();
+				if (robot.isInsideRoom()) {
 					//move the robot
 					drive1Step2Exit();
 					currentPosition = robot.getCurrentPosition();
 					//keep the record
-					positionRecord.addLast(currentPosition);
+					positionRecord.add(currentPosition);
 					if (positionRecord.size() > 1) {
 						//If the robot ended up in the same spot, which means that the robot is
 						//circling around
@@ -49,6 +48,7 @@ public class SmarterWallFollower extends WallFollower {
 							while (robot.distanceToObstacle(Direction.FORWARD)!=0) {
 								robot.move(1);
 							}
+							robot.rotate(Turn.RIGHT);
 						}
 					}
 				}

@@ -1,5 +1,6 @@
 package gui;
 
+import generation.CardinalDirection;
 import gui.Robot.Direction;
 
 /**
@@ -26,8 +27,19 @@ public class UnreliableSensor extends ReliableSensor {
 	}
 	
 	public UnreliableSensor(Direction direction) {
-		super(direction);
+		isOperational = true;
+		mapping();
+		setSensorDirection(direction);
 	}
+	
+	/**
+	 * Sets the operational status
+	 * @param status used to set the sensor
+	 */
+	public void setOperational(boolean operational) {
+		isOperational = operational;
+	}
+	
 	
 	/**
 	 * Method starts a concurrent, independent failure and repair
@@ -42,7 +54,8 @@ public class UnreliableSensor extends ReliableSensor {
 		throws UnsupportedOperationException {
 		try {
 			//initiate the repair cycle
-			RepairCycle cycle = new RepairCycle(meanTimeBetweenFailures, meanTimeToRepair, this);
+			RepairCycle cycle = new RepairCycle(meanTimeBetweenFailures, meanTimeToRepair);
+			cycle.setSensor(this);
 			repairCycle = new Thread(cycle);
 			repairCycle.start();
 		} catch (Exception e) {
@@ -69,7 +82,7 @@ public class UnreliableSensor extends ReliableSensor {
 			// finish the cycle
 			repairCycle.interrupt();
 			// sensor is operational
-			isOperational = true;
+			setOperational(true);
 			// clean up
 			repairCycle = null;
 		} else {
