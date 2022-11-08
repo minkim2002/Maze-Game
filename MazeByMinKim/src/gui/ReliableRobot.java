@@ -25,8 +25,8 @@ public class ReliableRobot implements Robot {
 	protected Control control;
 	protected DistanceSensor sensorForward;
 	protected DistanceSensor sensorLeft;
-	protected DistanceSensor sensorBackward;
 	protected DistanceSensor sensorRight;
+	protected DistanceSensor sensorBackward;
 
 	private Maze referenceMaze;
 	private int width;
@@ -41,7 +41,6 @@ public class ReliableRobot implements Robot {
 	public ReliableRobot() {
 		distanceTraveled = 0;
 		setBatteryLevel(INITIAL_BATTERY);
-		isStopped = false;
 		sensorForward = new ReliableSensor(Direction.FORWARD);
 		sensorLeft = new ReliableSensor(Direction.LEFT);
 		sensorRight = new ReliableSensor(Direction.RIGHT);
@@ -65,7 +64,7 @@ public class ReliableRobot implements Robot {
 		
 		//set traveled distance to zero
 		resetOdometer();
-		
+		isStopped = false;
 		//get the maze and its information
 		referenceMaze = controller.getMaze();
 		width = referenceMaze.getWidth();
@@ -454,6 +453,7 @@ public class ReliableRobot implements Robot {
 				break;
 			case RIGHT:
 				distance = sensorRight.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);
+				System.out.println(distance);
 				break;
 			case BACKWARD:
 				distance = sensorBackward.distanceToObstacle(currentPosition, getCurrentDirection(), batteryLevel);

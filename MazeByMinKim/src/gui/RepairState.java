@@ -110,7 +110,7 @@ public class RepairState implements SensorState {
 					}
 				case RIGHT:
 					if (forwardSensorStatus) {
-						return Direction.RIGHT;
+						return Direction.FORWARD;
 					}
 					if (backwardSensorStatus) {
 						return Direction.BACKWARD;

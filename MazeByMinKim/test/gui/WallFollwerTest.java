@@ -71,6 +71,7 @@ class WallFollwerTest {
 	 * Compare the robot's direction and the actual direction of the exit. 
 	 * It it matches, algorithm works.
 	 * 
+	 * Warning!!: Takes more than 2 min
 	 */
 	@Test
 	final void checkDrive() {

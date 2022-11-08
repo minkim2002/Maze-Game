@@ -30,6 +30,7 @@ public class WallFollower extends Wizard {
 	public boolean backwardStatus;
 	
 	
+	
 	/**
 	 * Drive the robot towards the exit using the left wall-follower algorithm.
 	 * @return true if the algorithm successfully drives the robot out of the maze.
@@ -41,11 +42,13 @@ public class WallFollower extends Wizard {
 			//keep track of a robot's current position.
 			int[] currentPosition;
 			try {
+				Thread.sleep(500);
 				//One step
 				drive1Step2Exit();
 				//Update the robot's position.
 				currentPosition = robot.getCurrentPosition();
 			} catch (Exception e) {
+				System.out.println(e);
 				throw new Exception();
 			}
 			// Check if the robot is at the exit.
@@ -76,10 +79,10 @@ public class WallFollower extends Wizard {
 		//Check whether sensors are in need of repair.
 		forwardStatus = isOperational(Direction.FORWARD);
 		leftStatus = isOperational(Direction.LEFT);
-		rightStatus = isOperational(Direction.RIGHT);
-		backwardStatus = isOperational(Direction.BACKWARD);
 		//Either forward or left sensor is not working
 		if(!forwardStatus || !leftStatus) {
+			rightStatus = isOperational(Direction.RIGHT);
+			backwardStatus = isOperational(Direction.BACKWARD);
 			boolean[] sensors = {forwardStatus, leftStatus, rightStatus, backwardStatus};
 			// If all the sensors need to be repaired
 			if (!sensors[0] && !sensors[1] && !sensors[2] && !sensors[3])
@@ -118,7 +121,7 @@ public class WallFollower extends Wizard {
 			isExitVisible = (dist == Integer.MAX_VALUE);
 			//Sensor Operational: confirmed
 			return true;
-		} catch (Exception e) {
+		} catch (UnsupportedOperationException e) {
 			return false;
 		}
 	}
@@ -131,10 +134,12 @@ public class WallFollower extends Wizard {
 			try {
 				//Sleep for 2 seconds.
 				Thread.sleep(2000);
+				
 				//Recheck the status.
 				sensors[0] = isOperational(Direction.FORWARD);
 				sensors[1] = isOperational(Direction.LEFT);
 			} catch (Exception e) {
+				System.err.println("Something went wrong!");
 				return;
 			}
 		}

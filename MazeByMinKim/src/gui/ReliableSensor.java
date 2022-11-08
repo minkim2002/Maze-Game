@@ -77,13 +77,10 @@ public class ReliableSensor implements DistanceSensor {
 		}
 		
 		// check if the sensor is not operational or the power is not enough for sensing
-		if (!isOperational){
-			throw new Exception("SensorFailure");
-		}
+		if (!isOperational)throw new Exception("SensorFailure");
 		if (powersupply[0] < getEnergyConsumptionForSensing()) {
 			throw new Exception("PowerFailure");
 		}
-		else {
 			// figure out which fixed direction we should move in
 			CardinalDirection currentDir = convertToFixedDir(referenceDirection, currentDirection);
 			
@@ -98,7 +95,7 @@ public class ReliableSensor implements DistanceSensor {
 			}
 			powersupply[0] -= getEnergyConsumptionForSensing();
 			return distance;
-		}
+		
 	}
 	
 	protected int sense(int[] currentPosition, CardinalDirection currentDirection, float[] powersupply, int distance)
@@ -109,6 +106,7 @@ public class ReliableSensor implements DistanceSensor {
 			case North:
 				if (currentPosition[1]-1 < 0) {
 					powersupply[0] -= getEnergyConsumptionForSensing();
+					
 					if (powersupply[0] < getEnergyConsumptionForSensing()) {
 						throw new Exception("PowerFailure");
 					}
@@ -119,6 +117,7 @@ public class ReliableSensor implements DistanceSensor {
 			case West:
 				if (currentPosition[0]-1 < 0) {
 					powersupply[0] -= getEnergyConsumptionForSensing();
+					
 					if (powersupply[0] < getEnergyConsumptionForSensing()) {
 						throw new Exception("PowerFailure");
 					}
@@ -129,6 +128,7 @@ public class ReliableSensor implements DistanceSensor {
 			case East:
 				if (currentPosition[0]+1 >= width) {
 					powersupply[0] -= getEnergyConsumptionForSensing();
+		
 					if (powersupply[0] < getEnergyConsumptionForSensing()) {
 						throw new Exception("PowerFailure");
 					}
