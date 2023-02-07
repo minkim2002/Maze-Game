@@ -1,4 +1,5 @@
-#MazeByMinKim
+
+ # MazeByMinKim
 
  CSCI 301 Software Development Project: Maze Game
  
