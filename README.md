@@ -1,7 +1,7 @@
 
- # MazeByMinKim
+ # Maze Game
 
- CSCI 301 Software Development Project: Maze Game
+ Maze Game
  
  Preferred IDEs to run: Eclipse, VScode
  
